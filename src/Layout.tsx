@@ -12,16 +12,16 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
 
   return (
     <TooltipProvider>
-      <div className="w-screen h-screen flex overflow-hidden">
-        <div className="absolute -z-50 h-full w-full">
+      <div className="relative w-screen h-full flex">
+        <div className="fixed -z-50 h-screen w-full">
           <img src="/bg.png" className="w-full h-full object-cover" />
         </div>
-        <div className="absolute -z-40 h-full w-full bg-background/50" />
+        <div className="fixed -z-40 h-full w-full bg-background/50" />
         <Sidebar items={items} />
         <div
           className={cn(
-            "flex-1 transition-[backdrop-filter] duration-300",
-            !isHome && "w-full h-full backdrop-blur-3xl",
+            "flex-1 transition-[backdrop-filter] p-14 duration-300 min-h-screen overflow-hidden",
+            !isHome && "backdrop-blur-3xl overflow-y-scroll",
           )}
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -37,9 +37,9 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
                 opacity: 0,
                 transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
               }}
-              className={cn("w-full h-full", !isHome && "p-14 overflow-y-scroll")}
+              className={cn("w-full h-full opacity-0", !isHome && "max-w-xl")}
             >
-              <div className="w-full h-full max-w-xl">{outlet}</div>
+              {outlet}
             </motion.div>
           </AnimatePresence>
         </div>

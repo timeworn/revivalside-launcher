@@ -24,7 +24,7 @@ const SidebarItem: FC<SidebarItemProps> = ({ name, className, children, ...props
           <NavLink
             className={({ isActive }) =>
               cn(
-                "size-9 rounded-lg brightness-75 hover:brightness-100 hover:bg-muted inline-flex items-center justify-center box-content p-1",
+                "size-9 rounded-lg brightness-75 hover:brightness-100 transition-all duration-300 hover:bg-muted inline-flex items-center justify-center box-content p-1",
                 isActive && "brightness-100 bg-muted",
                 className,
               )
@@ -46,7 +46,7 @@ interface SidebarProps {
 
 export const Sidebar: FC<SidebarProps> = ({ items = [] }) => {
   return (
-    <nav className="flex w-fit h-full flex-col items-center gap-4 p-2 backdrop-blur-3xl">
+    <nav className="sticky top-0 flex w-fit h-screen flex-col items-center gap-4 p-2 backdrop-blur-3xl">
       <img src="/favicon.webp" alt="Logo" className="size-8" />
       <Separator />
       <div className="flex flex-col gap-2">
