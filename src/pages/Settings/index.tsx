@@ -5,12 +5,28 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { useAsyncButton } from "@/hooks/useAsyncButton";
+import { useSettings } from "@/hooks/useSettings";
+import { LOBBY_ACK_OPTIONS } from "@/lib/schema";
+import { open } from "@tauri-apps/plugin-dialog";
 
 export const Settings = () => {
+  const { settings, setSetting } = useSettings();
   const { activate, text, isSubmitting } = useAsyncButton(() => new Promise((res) => setTimeout(res, 1000)), {
     idle: "Detect",
     submitting: "Detecting...",
   });
+
+  const browseForClient = async () => {
+    const selected = await open({
+      title: "Select Game Client",
+      filters: [{ name: "Assembly-CSharp", extensions: ["dll"] }],
+      multiple: false,
+    });
+
+    if (selected) {
+      setSetting("clientPath", selected || "");
+    }
+  };
 
   return (
     <FieldGroup>
@@ -18,18 +34,17 @@ export const Settings = () => {
         <FieldLegend>Official Client</FieldLegend>
         <FieldGroup>
           <Field>
-            <div className="flex flex-row-reverse gap-2 items-center">
+            <div className="flex gap-2 items-center">
+              <Input value={settings.clientPath} readOnly placeholder="No file selected..." />
               <div className="flex gap-1">
-                <input type="file" id="client-assembly" accept="Assembly-CSharp.dll" disabled={isSubmitting} hidden />
-                <Button className="hover:cursor-pointer" disabled={isSubmitting} variant="secondary" size="lg" asChild>
-                  <label htmlFor="client-assembly">Browse</label>
+                <Button variant="secondary" size="lg" onClick={browseForClient} disabled={isSubmitting}>
+                  Browse
                 </Button>
                 <Button size="lg" onClick={activate} disabled={isSubmitting}>
                   <Spinner hidden={!isSubmitting} />
                   <span>{text}</span>
                 </Button>
               </div>
-              <Input id="capture-folder" value="/path/to/capture/folder" readOnly />
             </div>
           </Field>
         </FieldGroup>
@@ -39,48 +54,100 @@ export const Settings = () => {
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="tcp-port">TCP</FieldLabel>
-            <Input id="tcp-port" type="number" min={1} max={65535} />
+            <Input
+              id="tcp-port"
+              type="number"
+              min={1}
+              max={65535}
+              value={settings.tcpPort}
+              onChange={(e) => setSetting("tcpPort", Number(e.target.value))}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="http-port">HTTP</FieldLabel>
-            <Input id="http-port" type="number" min={1} max={65535} />
+            <Input
+              id="http-port"
+              type="number"
+              min={1}
+              max={65535}
+              value={settings.httpPort}
+              onChange={(e) => setSetting("httpPort", Number(e.target.value))}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="wiki-port">Wiki</FieldLabel>
-            <Input id="wiki-port" type="number" min={1} max={65535} />
+            <Input
+              id="wiki-port"
+              type="number"
+              min={1}
+              max={65535}
+              value={settings.wikiPort}
+              onChange={(e) => setSetting("wikiPort", Number(e.target.value))}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="event-date">Event Date</FieldLabel>
-            <Input id="event-date" type="date" />
+            <Input
+              id="event-date"
+              type="date"
+              value={settings.eventDate}
+              onChange={(e) => setSetting("eventDate", e.target.value)}
+            />
           </Field>
           <Field>
             <FieldLabel htmlFor="lobby-ack">Lobby ACK</FieldLabel>
-            <NativeSelect id="lobby-ack">
-              <NativeSelectOption value="auto">Auto</NativeSelectOption>
-              <NativeSelectOption value="on">On</NativeSelectOption>
-              <NativeSelectOption value="off">Off</NativeSelectOption>
+            <NativeSelect
+              id="lobby-ack"
+              value={settings.lobbyAck}
+              onChange={(e) => setSetting("lobbyAck", e.target.value as typeof settings.lobbyAck)}
+            >
+              {LOBBY_ACK_OPTIONS.map((option) => (
+                <NativeSelectOption key={option} className="capitalize" value={option}>
+                  {option}
+                </NativeSelectOption>
+              ))}
             </NativeSelect>
           </Field>
         </FieldGroup>
         <FieldGroup>
           <Field orientation="horizontal">
-            <Switch id="lan-access" />
+            <Switch
+              id="lan-access"
+              checked={settings.allowLanAccess}
+              onCheckedChange={(checked) => setSetting("allowLanAccess", checked)}
+            />
             <FieldLabel htmlFor="lan-access">Allow LAN User Manager access</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="verbose-logs" />
+            <Switch
+              id="verbose-logs"
+              checked={settings.verboseLogging}
+              onCheckedChange={(checked) => setSetting("verboseLogging", checked)}
+            />
             <FieldLabel htmlFor="verbose-logs">Verbose listener logs</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="replay-capture" />
+            <Switch
+              id="replay-capture"
+              checked={settings.replayCapturedGameFlow}
+              onCheckedChange={(checked) => setSetting("replayCapturedGameFlow", checked)}
+            />
             <FieldLabel htmlFor="replay-capture">Replay captured game flow</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="skip-tutorial" />
+            <Switch
+              id="skip-tutorial"
+              checked={settings.skipTutorial}
+              onCheckedChange={(checked) => setSetting("skipTutorial", checked)}
+            />
             <FieldLabel htmlFor="skip-tutorial">Skip tutorial to win</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="reset-tutorial" />
+            <Switch
+              id="reset-tutorial"
+              checked={settings.resetTutorialOnLogin}
+              onCheckedChange={(checked) => setSetting("resetTutorialOnLogin", checked)}
+            />
             <FieldLabel htmlFor="reset-tutorial">Reset tutorial on login</FieldLabel>
           </Field>
         </FieldGroup>
@@ -90,7 +157,12 @@ export const Settings = () => {
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="server-time">Server Time</FieldLabel>
-            <Input id="server-time" type="datetime-local" />
+            <Input
+              id="server-time"
+              type="datetime-local"
+              value={settings.serverTime}
+              onChange={(e) => setSetting("serverTime", e.target.value)}
+            />
           </Field>
           <Field>
             <FieldLabel>Cache</FieldLabel>

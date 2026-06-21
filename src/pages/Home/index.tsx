@@ -65,7 +65,7 @@ export const Home = () => {
                 <GlobeOffIcon />
               </ActionButton>
             </div>
-            <Card className="bg-card/50 backdrop-blur-3xl">
+            <Card className="bg-transparent backdrop-blur-3xl">
               <CardContent>
                 <Collapsible>
                   <CollapsibleTrigger asChild>

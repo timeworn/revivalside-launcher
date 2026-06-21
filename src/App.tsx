@@ -22,11 +22,13 @@ const items: SidebarNavItem[] = [
     name: "Logs",
     icon: FileTextIcon,
     href: "#",
+    type: "folder",
   },
   {
     name: "Help",
     icon: InfoIcon,
-    href: "#",
+    href: "https://discord.gg/9FryPYZSjH",
+    type: "external",
     side: "bottom",
   },
   {
@@ -45,6 +47,11 @@ const router = createMemoryRouter([
       { index: true, element: <Home /> },
       { path: "save", element: <Save /> },
       { path: "settings", element: <Settings /> },
+      // {
+      //   path: "settings",
+      //   element: <SettingsLayout />,
+      //   children: [{ index: true, element: <Settings /> }],
+      // },
     ],
   },
 ]);

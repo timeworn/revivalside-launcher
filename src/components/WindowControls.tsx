@@ -9,7 +9,6 @@ export const WindowControls = () => {
   useEffect(() => {
     const checkResizable = async () => {
       const resizable = await win.isResizable();
-      console.log("Resizable:", resizable);
       setIsResizable(resizable);
     };
 

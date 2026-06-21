@@ -6,8 +6,11 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsyncButton } from "@/hooks/useAsyncButton";
 import { useAsyncToggle } from "@/hooks/useAsyncToggle";
+import { useSettings } from "@/hooks/useSettings";
 
 export const Save = () => {
+  const { settings, setSetting } = useSettings();
+
   const {
     isLoading: listenerLoading,
     toggle: toggleListener,
@@ -36,7 +39,7 @@ export const Save = () => {
         <FieldLegend>Capture Folder</FieldLegend>
         <FieldGroup>
           <Field>
-            <Input id="capture-folder" value="/path/to/capture/folder" readOnly />
+            <Input id="capture-folder" value={settings.capturePath} placeholder="No capture folder..." readOnly />
             <div className="flex gap-2">
               <Button variant="secondary" size="lg" onClick={toggleListener} disabled={listenerLoading}>
                 <Spinner hidden={!listenerLoading} />
@@ -54,19 +57,39 @@ export const Save = () => {
         <FieldLegend>Options</FieldLegend>
         <FieldGroup>
           <Field orientation="horizontal">
-            <Switch id="switch-imported-save" disabled={isSubmitting} />
+            <Switch
+              id="switch-imported-save"
+              checked={settings.switchToImportedSave}
+              onCheckedChange={(checked) => setSetting("switchToImportedSave", checked)}
+              disabled={isSubmitting}
+            />
             <FieldLabel htmlFor="switch-imported-save">Switch to imported save</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="update-matching-import" disabled={isSubmitting} />
+            <Switch
+              id="update-matching-import"
+              checked={settings.updateMatchingImport}
+              onCheckedChange={(checked) => setSetting("updateMatchingImport", checked)}
+              disabled={isSubmitting}
+            />
             <FieldLabel htmlFor="update-matching-import">Update matching import</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="keep-uid" disabled={isSubmitting} />
+            <Switch
+              id="keep-uid"
+              checked={settings.keepOfficialUid}
+              onCheckedChange={(checked) => setSetting("keepOfficialUid", checked)}
+              disabled={isSubmitting}
+            />
             <FieldLabel htmlFor="keep-uid">Keep official UID</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="keep-fc" disabled={isSubmitting} />
+            <Switch
+              id="keep-fc"
+              checked={settings.keepOfficialFriendCode}
+              onCheckedChange={(checked) => setSetting("keepOfficialFriendCode", checked)}
+              disabled={isSubmitting}
+            />
             <FieldLabel htmlFor="keep-fc">Keep official friend code</FieldLabel>
           </Field>
         </FieldGroup>

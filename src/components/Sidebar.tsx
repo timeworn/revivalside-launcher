@@ -1,72 +1,94 @@
-import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { type LucideIcon } from "lucide-react";
+import { ExternalLinkIcon, type LucideIcon } from "lucide-react";
+import { Slot } from "radix-ui";
 import type { ComponentProps, FC } from "react";
 import { NavLink } from "react-router-dom";
+import { openPath, openUrl } from "@tauri-apps/plugin-opener";
 
 export interface SidebarNavItem {
   name: string;
   icon: LucideIcon;
-  href?: string;
+  href: string;
   side?: "top" | "bottom";
+  type?: "link" | "folder" | "external";
 }
 
-interface SidebarItemProps extends ComponentProps<typeof NavLink> {
-  name: string;
-}
-
-const SidebarItem: FC<SidebarItemProps> = ({ name, className, children, ...props }) => {
+export const Sidebar: FC<ComponentProps<"nav">> = ({ className, children, ...props }) => {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div>
-          <NavLink
-            className={({ isActive }) =>
-              cn(
-                "size-9 rounded-lg brightness-75 hover:brightness-100 transition-all duration-300 hover:bg-muted inline-flex items-center justify-center box-content p-1",
-                isActive && "brightness-100 bg-muted",
-                className,
-              )
-            }
-            {...props}
-          >
-            {children}
-          </NavLink>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent side="right">{name}</TooltipContent>
-    </Tooltip>
+    <nav className={cn("sticky top-0 z-50 flex w-fit h-screen flex-col items-center gap-4 p-2", className)} {...props}>
+      {children}
+    </nav>
   );
 };
 
-interface SidebarProps {
-  items?: SidebarNavItem[];
+export const SidebarGroup: FC<ComponentProps<"div">> = ({ className, children, ...props }) => {
+  return (
+    <div className={cn("flex flex-col gap-2", className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+interface SidebarItemProps extends ComponentProps<"div"> {
+  item: SidebarNavItem;
+  asChild?: boolean;
 }
 
-export const Sidebar: FC<SidebarProps> = ({ items = [] }) => {
+export const SidebarItem: FC<SidebarItemProps> = ({ item, className }) => {
+  item = {
+    type: "link",
+    ...item,
+  };
+
+  const Comp: FC<ComponentProps<"div"> & { active?: boolean }> = ({ children, active, className }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Slot.Root
+          className={cn(
+            "gap-2 size-9 rounded-lg brightness-75 hover:brightness-100 transition-all duration-300 hover:bg-muted inline-flex items-center justify-center box-content p-1",
+            active && "brightness-100 bg-muted",
+            className,
+          )}
+        >
+          {children}
+        </Slot.Root>
+      </TooltipTrigger>
+      <TooltipContent side="right">{item.name}</TooltipContent>
+    </Tooltip>
+  );
+
+  if (item.type === "link") {
+    return (
+      <NavLink to={item.href} end>
+        {({ isActive }) => (
+          <Comp active={isActive} className={className}>
+            <div>
+              <item.icon />
+            </div>
+          </Comp>
+        )}
+      </NavLink>
+    );
+  }
+
+  const handleClick = async () => {
+    try {
+      if (item.type === "external") {
+        await openUrl(item.href);
+      } else {
+        await openPath(item.href);
+      }
+    } catch (err) {
+      console.error(`failed to open "${item.href}":`, err);
+    }
+  };
+
   return (
-    <nav className="sticky top-0 z-50 flex w-fit h-screen flex-col items-center gap-4 p-2 backdrop-blur-3xl">
-      <img src="/favicon.webp" className="size-8" />
-      <Separator />
-      <div className="flex flex-col gap-2">
-        {items
-          .filter((item) => item.side === "top" || !item.side)
-          .map((item, index) => (
-            <SidebarItem key={index} name={item.name} to={item.href || "#"}>
-              <item.icon />
-            </SidebarItem>
-          ))}
-      </div>
-      <div className="flex mt-auto flex-col gap-2">
-        {items
-          .filter((item) => item.side === "bottom")
-          .map((item, index) => (
-            <SidebarItem key={index} name={item.name} to={item.href || "#"}>
-              <item.icon />
-            </SidebarItem>
-          ))}
-      </div>
-    </nav>
+    <Comp>
+      <button className={cn(className)} type="button" onClick={handleClick}>
+        <item.icon />
+      </button>
+    </Comp>
   );
 };

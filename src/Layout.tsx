@@ -1,10 +1,11 @@
-import { Sidebar, type SidebarNavItem } from "@/components/Sidebar";
+import { Sidebar, SidebarGroup, SidebarItem, type SidebarNavItem } from "@/components/Sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useLocation, useOutlet } from "react-router-dom";
+import { NavLink, useLocation, useOutlet } from "react-router-dom";
 import { type FC } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { WindowControls } from "@/components/WindowControls";
+import { Separator } from "@/components/ui/separator";
 
 export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
   const outlet = useOutlet();
@@ -19,7 +20,24 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
             <img src="/bg.png" className="w-full h-full object-cover" />
           </div>
           <div className="fixed -z-40 h-full w-full bg-background/50" />
-          <Sidebar items={items} />
+          <Sidebar className="backdrop-blur-3xl">
+            <img src="/favicon.webp" className="size-8" />
+            <Separator />
+            <SidebarGroup>
+              {items
+                .filter((item) => item.side === "top" || !item.side)
+                .map((item, index) => (
+                  <SidebarItem key={index} item={item} />
+                ))}
+            </SidebarGroup>
+            <SidebarGroup className="mt-auto">
+              {items
+                .filter((item) => item.side === "bottom")
+                .map((item, index) => (
+                  <SidebarItem key={index} item={item} />
+                ))}
+            </SidebarGroup>
+          </Sidebar>
           <div
             className={cn(
               "flex-1 transition-[backdrop-filter] p-14 duration-300 min-h-screen overflow-hidden",
