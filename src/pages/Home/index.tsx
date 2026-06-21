@@ -21,41 +21,28 @@ import {
   PlayIcon,
   UsersRoundIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useAsyncToggle } from "@/hooks/useAsyncToggle";
 
 export const Home = () => {
-  const [startState, setStartState] = useState<"started" | "starting" | "stopped" | "stopping">("stopped");
-  const isLoading = startState === "starting" || startState === "stopping";
-  const buttonText = () => {
-    switch (startState) {
-      case "started":
-        return "Stop Server";
-      case "stopped":
-        return "Start Server";
-      case "starting":
-        return "Starting...";
-      case "stopping":
-        return "Stopping...";
-    }
-  };
+  const { state, isLoading, toggle, text } = useAsyncToggle(
+    () => new Promise((res) => setTimeout(res, 1000)),
+    () => new Promise((res) => setTimeout(res, 1000)),
+    {
+      on: "Stop Server",
+      off: "Start Server",
+    },
+  );
+
   const buttonIcon = () => {
-    switch (startState) {
-      case "started":
+    switch (state) {
+      case "on":
         return <PauseIcon color="relative" />;
-      case "stopped":
+      case "off":
         return <PlayIcon color="relative" />;
       case "starting":
       case "stopping":
         return <Spinner />;
     }
-  };
-
-  const toggleServer = async () => {
-    setStartState((prev) => (prev === "started" ? "stopping" : "starting"));
-
-    setTimeout(() => {
-      setStartState((prev) => (prev === "stopping" ? "stopped" : "started"));
-    }, 1000);
   };
 
   return (
@@ -78,16 +65,16 @@ export const Home = () => {
                 <GlobeOffIcon />
               </ActionButton>
             </div>
-            <Card className="bg-card/70 backdrop-blur-md">
+            <Card className="bg-card/50 backdrop-blur-3xl">
               <CardContent>
                 <Collapsible>
                   <CollapsibleTrigger asChild>
-                    <button className="group w-full uppercase flex items-stretch transition-colors hover:bg-foreground/10 px-(--card-spacing)">
+                    <button className="group w-full uppercase flex items-stretch transition-colors">
                       <span className="font-semibold uppercase tracking-widest">Logs</span>
-                      <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
+                      <ChevronDownIcon className="ml-auto rotate-0 group-data-[state=open]:rotate-180 transition-transform" />
                     </button>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 pt-0 text-sm px-(--card-spacing)">
+                  <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 text-sm">
                     <div>This panel can be expanded or collapsed to reveal additional content.</div>
                     <Button size="xs">Learn More</Button>
                   </CollapsibleContent>
@@ -97,19 +84,19 @@ export const Home = () => {
           </div>
           <div className="flex flex-1 gap-2 justify-end items-end">
             <Button
-              className="h-14 group border-none hover:bg-main-foreground hover:text-main gap-4 flex px-7 justify-center items-center rounded-full bg-main text-main-foreground"
-              onClick={toggleServer}
+              className="h-14 group border-none gap-4 flex px-7 justify-center items-center rounded-full"
+              onClick={toggle}
               disabled={isLoading}
             >
               <span
                 className={cn(
                   "*:size-5!",
-                  !isLoading ? "*:fill-main-foreground *:group-hover:fill-main *:transition-colors" : "",
+                  !isLoading ? "*:fill-primary-foreground *:group-hover:fill-primary *:transition-colors" : "",
                 )}
               >
                 {buttonIcon()}
               </span>
-              <span className="text-lg font-extrabold">{buttonText()}</span>
+              <span className="text-lg font-extrabold">{text}</span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
