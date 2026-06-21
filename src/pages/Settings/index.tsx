@@ -24,7 +24,7 @@ export const Settings = () => {
                 <Button className="hover:cursor-pointer" disabled={isSubmitting} variant="secondary" size="lg" asChild>
                   <label htmlFor="client-assembly">Browse</label>
                 </Button>
-                <Button variant="secondary" size="lg" onClick={activate} disabled={isSubmitting}>
+                <Button size="lg" onClick={activate} disabled={isSubmitting}>
                   <Spinner hidden={!isSubmitting} />
                   <span>{text}</span>
                 </Button>

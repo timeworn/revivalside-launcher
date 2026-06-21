@@ -13,39 +13,41 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
 
   return (
     <TooltipProvider>
-      <WindowControls />
-      <div className="relative w-screen h-full flex">
-        <div className="fixed -z-50 h-screen w-full">
-          <img src="/bg.png" className="w-full h-full object-cover" />
-        </div>
-        <div className="fixed -z-40 h-full w-full bg-background/50" />
-        <Sidebar items={items} />
-        <div
-          className={cn(
-            "flex-1 transition-[backdrop-filter] p-14 duration-300 min-h-screen overflow-hidden",
-            !isHome && "backdrop-blur-3xl overflow-y-scroll",
-          )}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.25, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] },
-              }}
-              exit={{
-                opacity: 0,
-                transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
-              }}
-              className={cn("w-full h-full opacity-0", !isHome && "max-w-xl")}
-            >
-              {outlet}
-            </motion.div>
-          </AnimatePresence>
+      <div className="select-none">
+        <div className="relative w-screen h-full flex">
+          <div className="fixed -z-50 h-screen w-full">
+            <img src="/bg.png" className="w-full h-full object-cover" />
+          </div>
+          <div className="fixed -z-40 h-full w-full bg-background/50" />
+          <Sidebar items={items} />
+          <div
+            className={cn(
+              "flex-1 transition-[backdrop-filter] p-14 duration-300 min-h-screen overflow-hidden",
+              !isHome && "backdrop-blur-3xl overflow-y-scroll",
+            )}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.25, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] },
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
+                }}
+                className={cn("w-full h-full opacity-0", !isHome && "max-w-xl")}
+              >
+                {outlet}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
+      <WindowControls />
     </TooltipProvider>
   );
 };
