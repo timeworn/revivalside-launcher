@@ -1,7 +1,7 @@
 import { Layout } from "@/Layout";
 import "./App.css";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { HomeIcon, SaveIcon, SettingsIcon } from "lucide-react";
+import { FileTextIcon, HomeIcon, InfoIcon, SaveIcon, SettingsIcon } from "lucide-react";
 import type { SidebarNavItem } from "@/components/Sidebar";
 import { Home } from "@/pages/Home";
 import { Save } from "@/pages/Save";
@@ -17,6 +17,17 @@ const items: SidebarNavItem[] = [
     name: "Cross Save",
     icon: SaveIcon,
     href: "/save",
+  },
+  {
+    name: "Logs",
+    icon: FileTextIcon,
+    href: "#",
+  },
+  {
+    name: "Help",
+    icon: InfoIcon,
+    href: "#",
+    side: "bottom",
   },
   {
     name: "Settings",
