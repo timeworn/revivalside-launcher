@@ -37,9 +37,9 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
                 opacity: 0,
                 transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
               }}
-              className={cn("w-full h-full", !isHome && "p-14")}
+              className={cn("w-full h-full", !isHome && "p-14 overflow-y-scroll")}
             >
-              {outlet}
+              <div className="w-full h-full max-w-xl">{outlet}</div>
             </motion.div>
           </AnimatePresence>
         </div>
