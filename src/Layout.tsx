@@ -4,6 +4,7 @@ import { useLocation, useOutlet } from "react-router-dom";
 import { type FC } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
+import { WindowControls } from "@/components/WindowControls";
 
 export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
   const outlet = useOutlet();
@@ -12,6 +13,7 @@ export const Layout: FC<{ items: SidebarNavItem[] }> = ({ items }) => {
 
   return (
     <TooltipProvider>
+      <WindowControls />
       <div className="relative w-screen h-full flex">
         <div className="fixed -z-50 h-screen w-full">
           <img src="/bg.png" className="w-full h-full object-cover" />

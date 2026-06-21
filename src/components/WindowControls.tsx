@@ -1,0 +1,42 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { MinusIcon, XIcon, SquareIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+
+export const WindowControls = () => {
+  const win = getCurrentWindow();
+  const [isResiazble, setIsResizable] = useState(false);
+
+  useEffect(() => {
+    const checkResizable = async () => {
+      const resizable = await win.isResizable();
+      console.log("Resizable:", resizable);
+      setIsResizable(resizable);
+    };
+
+    checkResizable();
+  }, [win]);
+
+  return (
+    <div data-tauri-drag-region className="fixed top-0 h-8 flex items-center justify-end w-screen z-40">
+      <button
+        onClick={() => win.minimize()}
+        className="w-11 h-full flex items-center justify-center text-white not-disabled:hover:bg-white/10 disabled:opacity-25 transition-colors"
+      >
+        <MinusIcon size={14} />
+      </button>
+      <button
+        onClick={async () => win.toggleMaximize()}
+        disabled={!isResiazble}
+        className="w-11 h-full flex items-center justify-center text-white not-disabled:hover:bg-white/10 disabled:opacity-25 transition-colors"
+      >
+        <SquareIcon size={14} />
+      </button>
+      <button
+        onClick={() => win.close()}
+        className="w-11 h-full flex items-center justify-center text-white not-disabled:hover:bg-red-600 disabled:opacity-25 transition-colors"
+      >
+        <XIcon size={14} />
+      </button>
+    </div>
+  );
+};
