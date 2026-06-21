@@ -38,24 +38,24 @@ export const Settings = () => {
         <FieldLegend>Listener</FieldLegend>
         <FieldGroup>
           <Field>
-            <FieldLabel>TCP</FieldLabel>
-            <Input type="number" min={1} max={65535} />
+            <FieldLabel htmlFor="tcp-port">TCP</FieldLabel>
+            <Input id="tcp-port" type="number" min={1} max={65535} />
           </Field>
           <Field>
-            <FieldLabel>HTTP</FieldLabel>
-            <Input type="number" min={1} max={65535} />
+            <FieldLabel htmlFor="http-port">HTTP</FieldLabel>
+            <Input id="http-port" type="number" min={1} max={65535} />
           </Field>
           <Field>
-            <FieldLabel>Wiki</FieldLabel>
-            <Input type="number" min={1} max={65535} />
+            <FieldLabel htmlFor="wiki-port">Wiki</FieldLabel>
+            <Input id="wiki-port" type="number" min={1} max={65535} />
           </Field>
           <Field>
-            <FieldLabel>Event Date</FieldLabel>
-            <Input type="date" />
+            <FieldLabel htmlFor="event-date">Event Date</FieldLabel>
+            <Input id="event-date" type="date" />
           </Field>
           <Field>
-            <FieldLabel>Event Date</FieldLabel>
-            <NativeSelect>
+            <FieldLabel htmlFor="lobby-ack">Lobby ACK</FieldLabel>
+            <NativeSelect id="lobby-ack">
               <NativeSelectOption value="auto">Auto</NativeSelectOption>
               <NativeSelectOption value="on">On</NativeSelectOption>
               <NativeSelectOption value="off">Off</NativeSelectOption>
@@ -64,24 +64,24 @@ export const Settings = () => {
         </FieldGroup>
         <FieldGroup>
           <Field orientation="horizontal">
-            <Switch />
-            <FieldLabel>Allow LAN User Manager access</FieldLabel>
+            <Switch id="lan-access" />
+            <FieldLabel htmlFor="lan-access">Allow LAN User Manager access</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch />
-            <FieldLabel>Verbose listener logs</FieldLabel>
+            <Switch id="verbose-logs" />
+            <FieldLabel htmlFor="verbose-logs">Verbose listener logs</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch />
-            <FieldLabel>Replay captured game flow</FieldLabel>
+            <Switch id="replay-capture" />
+            <FieldLabel htmlFor="replay-capture">Replay captured game flow</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch />
-            <FieldLabel>Skip tutorial to win</FieldLabel>
+            <Switch id="skip-tutorial" />
+            <FieldLabel htmlFor="skip-tutorial">Skip tutorial to win</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch />
-            <FieldLabel>Reset tutorial on login</FieldLabel>
+            <Switch id="reset-tutorial" />
+            <FieldLabel htmlFor="reset-tutorial">Reset tutorial on login</FieldLabel>
           </Field>
         </FieldGroup>
       </FieldSet>
@@ -89,8 +89,8 @@ export const Settings = () => {
         <FieldLegend>Other</FieldLegend>
         <FieldGroup>
           <Field>
-            <FieldLabel>Server Time</FieldLabel>
-            <Input type="datetime-local" />
+            <FieldLabel htmlFor="server-time">Server Time</FieldLabel>
+            <Input id="server-time" type="datetime-local" />
           </Field>
           <Field>
             <FieldLabel>Cache</FieldLabel>

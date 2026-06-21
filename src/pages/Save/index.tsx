@@ -38,7 +38,7 @@ export const Save = () => {
           <Field>
             <Input id="capture-folder" value="/path/to/capture/folder" readOnly />
             <div className="flex gap-2">
-              <Button variant="clear" size="lg" onClick={toggleListener} disabled={listenerLoading}>
+              <Button variant="secondary" size="lg" onClick={toggleListener} disabled={listenerLoading}>
                 <Spinner hidden={!listenerLoading} />
                 <span>{listenerText}</span>
               </Button>
@@ -54,20 +54,20 @@ export const Save = () => {
         <FieldLegend>Options</FieldLegend>
         <FieldGroup>
           <Field orientation="horizontal">
-            <Switch disabled={isSubmitting} />
-            <FieldLabel>Switch to imported save</FieldLabel>
+            <Switch id="switch-imported-save" disabled={isSubmitting} />
+            <FieldLabel htmlFor="switch-imported-save">Switch to imported save</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch disabled={isSubmitting} />
-            <FieldLabel>Update matching import</FieldLabel>
+            <Switch id="update-matching-import" disabled={isSubmitting} />
+            <FieldLabel htmlFor="update-matching-import">Update matching import</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch disabled={isSubmitting} />
-            <FieldLabel>Keep official UID</FieldLabel>
+            <Switch id="keep-uid" disabled={isSubmitting} />
+            <FieldLabel htmlFor="keep-uid">Keep official UID</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch disabled={isSubmitting} />
-            <FieldLabel>Keep official friend code</FieldLabel>
+            <Switch id="keep-fc" disabled={isSubmitting} />
+            <FieldLabel htmlFor="keep-fc">Keep official friend code</FieldLabel>
           </Field>
         </FieldGroup>
       </FieldSet>
@@ -75,9 +75,9 @@ export const Save = () => {
         <FieldLegend>Result</FieldLegend>
         <FieldGroup>
           <Field>
-            <FieldLabel>Idle</FieldLabel>
+            <FieldLabel htmlFor="result-text">Idle</FieldLabel>
             <FieldDescription>C:\path\to\imported\save</FieldDescription>
-            <Textarea className="min-h-36" value="" readOnly />
+            <Textarea id="result-text" className="min-h-36" value="" readOnly />
           </Field>
         </FieldGroup>
       </FieldSet>
