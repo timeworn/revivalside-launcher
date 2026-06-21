@@ -46,7 +46,7 @@ interface SidebarProps {
 
 export const Sidebar: FC<SidebarProps> = ({ items = [] }) => {
   return (
-    <nav className="backdrop-blur-md bg-background/90 flex w-fit h-full flex-col items-center gap-4 p-2">
+    <nav className="flex w-fit h-full flex-col items-center gap-4 p-2 backdrop-blur-3xl">
       <img src="/favicon.webp" alt="Logo" className="size-8" />
       <Separator />
       <div className="flex flex-col gap-2">

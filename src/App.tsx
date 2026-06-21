@@ -4,6 +4,8 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { HomeIcon, SaveIcon, SettingsIcon } from "lucide-react";
 import type { SidebarNavItem } from "@/components/Sidebar";
 import { Home } from "@/pages/Home";
+import { Save } from "@/pages/Save";
+import { Settings } from "@/pages/Settings";
 
 const items: SidebarNavItem[] = [
   {
@@ -30,8 +32,8 @@ const router = createMemoryRouter([
     element: <Layout items={items} />,
     children: [
       { index: true, element: <Home /> },
-      // { path: "library", element: <Library /> },
-      // { path: "settings", element: <Settings /> },
+      { path: "save", element: <Save /> },
+      { path: "settings", element: <Settings /> },
     ],
   },
 ]);
