@@ -24,6 +24,7 @@ import {
 import { useAsyncToggle } from "@/hooks/useAsyncToggle";
 import { LogViewer } from "@/components/LogViewer";
 import { useState } from "react";
+import logo from "@/assets/logo.webp";
 
 export const Home = () => {
   const [open, setOpen] = useState(false);
@@ -51,7 +52,7 @@ export const Home = () => {
 
   return (
     <div className="flex flex-1 flex-col h-full">
-      <img src="/logo.webp" alt="Logo" className="w-sm" />
+      <img src={logo} alt="Logo" className="w-sm" />
       <div className="flex flex-1">
         <div className="flex flex-1 mt-auto gap-12">
           <div className="flex flex-col gap-2 max-w-md w-full">
@@ -72,7 +73,7 @@ export const Home = () => {
             <Collapsible open={open} onOpenChange={setOpen}>
               <Card
                 className={cn(
-                  "bg-transparent backdrop-blur-3xl transition-colors hover:bg-white/10",
+                  "bg-card/20 backdrop-blur-3xl transition-colors hover:bg-foreground/10",
                   open ? "rounded-b-none" : "",
                 )}
               >

@@ -46,7 +46,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({ item, className }) => {
       <TooltipTrigger asChild>
         <Slot.Root
           className={cn(
-            "gap-2 size-9 rounded-lg brightness-75 hover:brightness-100 transition-all duration-300 hover:bg-muted inline-flex items-center justify-center box-content p-1",
+            "gap-2 size-9 rounded-lg brightness-80 hover:brightness-100 transition-all duration-300 hover:bg-muted inline-flex items-center justify-center box-content p-1",
             active && "brightness-100 bg-muted",
             className,
           )}

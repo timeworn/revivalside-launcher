@@ -31,9 +31,7 @@ export const LogViewer: FC<ComponentProps<"div">> = ({ className, ...props }) =>
   const [paused, setPaused] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
-  const pausedRef = useRef(false);
-
-  pausedRef.current = paused;
+  const pausedRef = useRef(paused);
 
   const append = useCallback((level: LogLevel, message: string) => {
     if (pausedRef.current) return;
@@ -88,7 +86,7 @@ export const LogViewer: FC<ComponentProps<"div">> = ({ className, ...props }) =>
       </div>
       <div ref={bodyRef} onScroll={onScroll} className="h-64 overflow-y-auto p-2.5 space-y-0.5">
         {lines.map((line) => (
-          <div key={line.id} className="flex gap-2 hover:bg-muted/60 rounded px-1 py-px">
+          <div key={line.id} className="flex gap-2 hover:bg-foreground/10 rounded px-1 py-px">
             <span className="text-muted-foreground/60 shrink-0 tabular-nums select-none">
               {line.timestamp.toISOString().replace("T", " ").slice(0, 19)}
             </span>

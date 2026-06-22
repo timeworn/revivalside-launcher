@@ -31,6 +31,39 @@ export default defineConfig(async () => ({
     },
   },
 
+  build: {
+    target: "esnext",
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
+            return "react";
+          }
+
+          if (id.includes("node_modules/zod/")) {
+            return "zod";
+          }
+
+          if (id.includes("node_modules/react-router") || id.includes("node_modules/@remix-run")) {
+            return "router";
+          }
+
+          if (id.includes("node_modules/radix-ui/") || id.includes("node_modules/@radix-ui/")) {
+            return "radix";
+          }
+
+          if (id.includes("node_modules/motion/")) {
+            return "motion";
+          }
+
+          if (id.includes("node_modules/lucide-react/")) {
+            return "icons";
+          }
+        },
+      },
+    },
+  },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
