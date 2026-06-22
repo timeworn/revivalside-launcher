@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { ExternalLinkIcon, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 import type { ComponentProps, FC } from "react";
 import { NavLink } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { Sidebar, SidebarGroup, SidebarItem, type SidebarNavItem } from "@/components/Sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NavLink, useLocation, useOutlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router-dom";
 import { type FC } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";

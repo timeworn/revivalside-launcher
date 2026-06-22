@@ -22,8 +22,12 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import { useAsyncToggle } from "@/hooks/useAsyncToggle";
+import { LogViewer } from "@/components/LogViewer";
+import { useState } from "react";
 
 export const Home = () => {
+  const [open, setOpen] = useState(false);
+
   const { state, isLoading, toggle, text } = useAsyncToggle(
     () => new Promise((res) => setTimeout(res, 1000)),
     () => new Promise((res) => setTimeout(res, 1000)),
@@ -65,22 +69,26 @@ export const Home = () => {
                 <GlobeOffIcon />
               </ActionButton>
             </div>
-            <Card className="bg-transparent backdrop-blur-3xl">
-              <CardContent>
-                <Collapsible>
+            <Collapsible open={open} onOpenChange={setOpen}>
+              <Card
+                className={cn(
+                  "bg-transparent backdrop-blur-3xl transition-colors hover:bg-white/10",
+                  open ? "rounded-b-none" : "",
+                )}
+              >
+                <CardContent>
                   <CollapsibleTrigger asChild>
-                    <button className="group w-full uppercase flex items-stretch transition-colors">
+                    <button className="w-full uppercase flex items-stretch">
                       <span className="font-semibold uppercase tracking-widest">Logs</span>
                       <ChevronDownIcon className="ml-auto rotate-0 group-data-[state=open]:rotate-180 transition-transform" />
                     </button>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="flex flex-col items-start gap-2 p-2.5 text-sm">
-                    <div>This panel can be expanded or collapsed to reveal additional content.</div>
-                    <Button size="xs">Learn More</Button>
-                  </CollapsibleContent>
-                </Collapsible>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+              <CollapsibleContent>
+                <LogViewer className="w-full bg-transparent backdrop-blur-3xl rounded-t-none border-none ring-1 ring-foreground/10" />
+              </CollapsibleContent>
+            </Collapsible>
           </div>
           <div className="flex flex-1 gap-2 justify-end items-end">
             <Button
