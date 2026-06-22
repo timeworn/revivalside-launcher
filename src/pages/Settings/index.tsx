@@ -9,9 +9,11 @@ import { useAsyncButton } from "@/hooks/useAsyncButton";
 import { useSettings } from "@/components/SettingsProvider";
 import { CLOSE_WINDOW_OPTIONS, LOBBY_ACK_OPTIONS } from "@/lib/schema";
 import { open } from "@tauri-apps/plugin-dialog";
+import { useLauncherState } from "@/components/LauncherStateProvider";
 
 export const Settings = () => {
   const { settings, setSetting } = useSettings();
+  const { isServerRunning } = useLauncherState();
   const { activate, text, isSubmitting } = useAsyncButton(() => new Promise((res) => setTimeout(res, 1000)), {
     idle: "Detect",
     submitting: "Detecting...",
@@ -39,10 +41,15 @@ export const Settings = () => {
             <div className="flex gap-2 items-center">
               <Input value={settings.clientPath} readOnly placeholder="No file selected..." />
               <div className="flex gap-1">
-                <Button variant="secondary" size="lg" onClick={browseForClient} disabled={isSubmitting}>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={browseForClient}
+                  disabled={isSubmitting || isServerRunning}
+                >
                   Browse
                 </Button>
-                <Button size="lg" onClick={activate} disabled={isSubmitting}>
+                <Button size="lg" onClick={activate} disabled={isSubmitting || isServerRunning}>
                   <Spinner hidden={!isSubmitting} />
                   <span>{text}</span>
                 </Button>
@@ -79,6 +86,7 @@ export const Settings = () => {
               max={65535}
               value={settings.tcpPort}
               onChange={(e) => setSetting("tcpPort", Number(e.target.value))}
+              disabled={isServerRunning}
             />
           </Field>
           <Field>
@@ -90,6 +98,7 @@ export const Settings = () => {
               max={65535}
               value={settings.httpPort}
               onChange={(e) => setSetting("httpPort", Number(e.target.value))}
+              disabled={isServerRunning}
             />
           </Field>
           <Field>

@@ -23,13 +23,15 @@ import {
 } from "lucide-react";
 import { useAsyncToggle } from "@/hooks/useAsyncToggle";
 import { LogViewer } from "@/components/LogViewer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "@/assets/logo.webp";
+import { useLauncherState } from "@/components/LauncherStateProvider";
 
 export const Home = () => {
+  const { setIsServerRunning } = useLauncherState();
   const [open, setOpen] = useState(false);
 
-  const { state, isLoading, toggle, text } = useAsyncToggle(
+  const { state, isLoading, toggle, text, isOn } = useAsyncToggle(
     () => new Promise((res) => setTimeout(res, 1000)),
     () => new Promise((res) => setTimeout(res, 1000)),
     {
@@ -49,6 +51,10 @@ export const Home = () => {
         return <Spinner />;
     }
   };
+
+  useEffect(() => {
+    setIsServerRunning(isOn);
+  }, [isOn, setIsServerRunning]);
 
   return (
     <div className="flex flex-1 flex-col h-full">

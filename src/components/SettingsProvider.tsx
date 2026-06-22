@@ -4,14 +4,14 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 
 const DEFAULTS = settingsSchema.parse({});
 
-type SettingsContextValue = {
+type SettingsContext = {
   settings: Settings;
   setSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => Promise<void>;
   saveSettings: () => Promise<void>;
   loading: boolean;
 };
 
-const SettingsContext = createContext<SettingsContextValue | null>(null);
+const SettingsContext = createContext<SettingsContext | null>(null);
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
