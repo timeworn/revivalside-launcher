@@ -78,15 +78,15 @@ export const Home = () => {
               >
                 <CardContent>
                   <CollapsibleTrigger asChild>
-                    <button className="w-full uppercase flex items-stretch">
+                    <button className="w-full uppercase flex items-stretch group">
                       <span className="font-semibold uppercase tracking-widest">Logs</span>
                       <ChevronDownIcon className="ml-auto rotate-0 group-data-[state=open]:rotate-180 transition-transform" />
                     </button>
                   </CollapsibleTrigger>
                 </CardContent>
               </Card>
-              <CollapsibleContent>
-                <LogViewer className="w-full bg-transparent backdrop-blur-3xl rounded-t-none border-none ring-1 ring-foreground/10" />
+              <CollapsibleContent className="ring-1 ring-foreground/10 rounded-lg rounded-t-none">
+                <LogViewer className="w-full bg-transparent backdrop-blur-3xl rounded-t-none border-none" />
               </CollapsibleContent>
             </Collapsible>
           </div>

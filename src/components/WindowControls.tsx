@@ -1,10 +1,17 @@
+import { useSettings } from "@/hooks/useSettings";
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { MinusIcon, XIcon, SquareIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const WindowControls = () => {
+  const { settings } = useSettings();
   const win = getCurrentWindow();
   const [isResiazble, setIsResizable] = useState(false);
+
+  const handleClose = async () => {
+    await invoke("close_window", { behavior: settings.closeWindow });
+  };
 
   useEffect(() => {
     const checkResizable = async () => {
@@ -31,7 +38,7 @@ export const WindowControls = () => {
         <SquareIcon size={14} />
       </button>
       <button
-        onClick={() => win.close()}
+        onClick={handleClose}
         className="w-11 h-full flex items-center justify-center text-white not-disabled:hover:bg-red-600 disabled:opacity-25 transition-colors"
       >
         <XIcon size={14} />

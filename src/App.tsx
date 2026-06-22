@@ -57,6 +57,12 @@ const router = createMemoryRouter([
 ]);
 
 function App() {
+  if (!import.meta.env.DEV) {
+    document.oncontextmenu = (event) => {
+      event.preventDefault();
+    };
+  }
+
   return <RouterProvider router={router} />;
 }
 

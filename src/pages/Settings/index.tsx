@@ -2,11 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { useAsyncButton } from "@/hooks/useAsyncButton";
 import { useSettings } from "@/hooks/useSettings";
-import { LOBBY_ACK_OPTIONS } from "@/lib/schema";
+import { CLOSE_WINDOW_OPTIONS, LOBBY_ACK_OPTIONS } from "@/lib/schema";
 import { open } from "@tauri-apps/plugin-dialog";
 
 export const Settings = () => {
@@ -31,9 +32,10 @@ export const Settings = () => {
   return (
     <FieldGroup>
       <FieldSet>
-        <FieldLegend>Official Client</FieldLegend>
+        <FieldLegend>General</FieldLegend>
         <FieldGroup>
           <Field>
+            <FieldLabel>Game Client</FieldLabel>
             <div className="flex gap-2 items-center">
               <Input value={settings.clientPath} readOnly placeholder="No file selected..." />
               <div className="flex gap-1">
@@ -48,6 +50,22 @@ export const Settings = () => {
             </div>
           </Field>
         </FieldGroup>
+      </FieldSet>
+      <FieldSet>
+        <FieldLegend variant="label">Close Window</FieldLegend>
+        <RadioGroup
+          value={settings.closeWindow}
+          onValueChange={(value) => setSetting("closeWindow", value as typeof settings.closeWindow)}
+        >
+          {CLOSE_WINDOW_OPTIONS.map((option) => (
+            <Field key={option} orientation="horizontal">
+              <RadioGroupItem id={`close-windows-${option}`} value={option} />
+              <FieldLabel htmlFor={`close-windows-${option}`} className="capitalize">
+                {option.replace(/_/g, " ")}
+              </FieldLabel>
+            </Field>
+          ))}
+        </RadioGroup>
       </FieldSet>
       <FieldSet>
         <FieldLegend>Listener</FieldLegend>

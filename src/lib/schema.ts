@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const LOBBY_ACK_OPTIONS = ["auto", "on", "off"] as const;
+export const CLOSE_WINDOW_OPTIONS = ["tray", "tray_on_start", "exit"] as const;
 
 export const settingsSchema = z.object({
   capturePath: z.string().default(""),
@@ -10,6 +11,7 @@ export const settingsSchema = z.object({
   keepOfficialFriendCode: z.boolean().default(false),
 
   clientPath: z.string().default(""),
+  closeWindow: z.enum(CLOSE_WINDOW_OPTIONS).default("tray"),
   tcpPort: z.int().min(1).max(65535).default(0),
   httpPort: z.int().min(1).max(65535).default(0),
   wikiPort: z.int().min(1).max(65535).default(0),
