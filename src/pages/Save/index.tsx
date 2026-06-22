@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsyncButton } from "@/hooks/useAsyncButton";
 import { useAsyncToggle } from "@/hooks/useAsyncToggle";
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings } from "@/components/SettingsProvider";
 
 export const Save = () => {
   const { settings, setSetting } = useSettings();

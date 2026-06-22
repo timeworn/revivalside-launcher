@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { useAsyncButton } from "@/hooks/useAsyncButton";
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings } from "@/components/SettingsProvider";
 import { CLOSE_WINDOW_OPTIONS, LOBBY_ACK_OPTIONS } from "@/lib/schema";
 import { open } from "@tauri-apps/plugin-dialog";
 

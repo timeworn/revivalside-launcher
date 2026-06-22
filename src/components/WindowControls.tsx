@@ -1,4 +1,4 @@
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings } from "@/components/SettingsProvider";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { MinusIcon, XIcon, SquareIcon } from "lucide-react";
@@ -10,6 +10,7 @@ export const WindowControls = () => {
   const [isResiazble, setIsResizable] = useState(false);
 
   const handleClose = async () => {
+    console.log("Closing window with behavior:", settings.closeWindow);
     await invoke("close_window", { behavior: settings.closeWindow });
   };
 
