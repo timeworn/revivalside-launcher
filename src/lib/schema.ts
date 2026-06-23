@@ -15,14 +15,14 @@ export const settingsSchema = z.object({
   tcpPort: z.int().min(1).max(65535).default(22000),
   httpPort: z.int().min(1).max(65535).default(8088),
   wikiPort: z.int().min(1).max(65535).default(5174),
-  eventDate: z.string().default("2025-04-10"),
+  eventDate: z.date().default(new Date("2025-04-10")),
   lobbyAck: z.enum(LOBBY_ACK_OPTIONS).default("auto"),
   allowLanAccess: z.boolean().default(false),
   verboseLogging: z.boolean().default(false),
   replayCapturedGameFlow: z.boolean().default(false),
   skipTutorial: z.boolean().default(false),
   resetTutorialOnLogin: z.boolean().default(false),
-  serverTime: z.string().default(""),
+  serverTime: z.date().default(new Date()),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;

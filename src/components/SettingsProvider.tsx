@@ -6,8 +6,8 @@ const DEFAULTS = settingsSchema.parse({});
 
 type SettingsContext = {
   settings: Settings;
-  setSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => Promise<void>;
-  saveSettings: () => Promise<void>;
+  setSetting: <K extends keyof Settings>(key: K, value: Settings[K] | undefined) => Promise<void>;
+  resetSettings: () => Promise<void>;
   loading: boolean;
 };
 
@@ -25,32 +25,38 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     return store;
   }, []);
 
-  useEffect(() => {
-    getStore().then(async (store) => {
-      const saved = await store.get<Settings>("settings");
-      if (saved) setSettings({ ...DEFAULTS, ...saved });
-      setLoading(false);
-    });
-  }, [getStore]);
-
   const setSetting = useCallback(
-    async <K extends keyof Settings>(key: K, value: Settings[K]) => {
-      const next = { ...settings, [key]: value };
+    async <K extends keyof Settings>(key: K, value: Settings[K] | undefined) => {
+      const patch = value === undefined ? {} : { [key]: value };
+      const next = settingsSchema.parse({ ...settings, ...patch });
       setSettings(next);
+
       const store = await getStore();
       await store.set("settings", next);
     },
     [settings, getStore],
   );
 
-  const saveSettings = useCallback(async () => {
+  const resetSettings = useCallback(async () => {
+    setSettings(DEFAULTS);
     const store = await getStore();
-    await store.set("settings", settings);
-    await store.save();
-  }, [settings, getStore]);
+    await store.reset();
+  }, [getStore]);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const store = await getStore();
+      const saved = await store.get<Partial<Settings>>("settings");
+      const parsed = settingsSchema.parse({ ...DEFAULTS, ...(saved ?? {}) });
+      setSettings(parsed);
+      setLoading(false);
+    };
+
+    loadSettings();
+  }, [getStore]);
 
   return (
-    <SettingsContext.Provider value={{ settings, setSetting, saveSettings, loading }}>
+    <SettingsContext.Provider value={{ settings, setSetting, resetSettings, loading }}>
       {children}
     </SettingsContext.Provider>
   );
