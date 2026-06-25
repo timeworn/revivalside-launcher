@@ -1,57 +1,30 @@
 import { Layout } from "@/Layout";
 import "./App.css";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { FileTextIcon, HomeIcon, InfoIcon, SaveIcon, SettingsIcon } from "lucide-react";
-import type { SidebarNavItem } from "@/components/Sidebar";
-import { Home } from "@/pages/Home";
 import { lazy, Suspense } from "react";
+import { revivalsideConfig } from "@/games/revivalside/config";
+import { GamePicker } from "@/pages/GamePicker";
+import { Providers } from "@/components/providers";
+import { starSaviorConfig } from "@/games/starsavior/config";
 
-const Save = lazy(() => import("@/pages/Save").then((i) => ({ default: i.Save })));
-const Settings = lazy(() => import("@/pages/Settings").then((i) => ({ default: i.Settings })));
+const Settings = lazy(() => import("@/pages/Settings").then((m) => ({ default: m.Settings })));
 
-const items: SidebarNavItem[] = [
-  {
-    name: "Home",
-    icon: HomeIcon,
-    href: "/",
-  },
-  {
-    name: "Cross Save",
-    icon: SaveIcon,
-    href: "/save",
-  },
-  {
-    name: "Logs",
-    icon: FileTextIcon,
-    href: "#",
-    type: "folder",
-  },
-  {
-    name: "Help",
-    icon: InfoIcon,
-    href: "https://discord.gg/9FryPYZSjH",
-    type: "external",
-    side: "bottom",
-  },
-  {
-    name: "Settings",
-    icon: SettingsIcon,
-    href: "/settings",
-    side: "bottom",
-  },
-];
+const GAMES = [revivalsideConfig, starSaviorConfig];
 
 const router = createMemoryRouter([
   {
     path: "/",
-    element: <Layout items={items} />,
+    element: (
+      <Providers games={GAMES}>
+        <Layout />
+      </Providers>
+    ),
     children: [
-      { index: true, element: <Home /> },
       {
-        path: "save",
+        index: true,
         element: (
           <Suspense>
-            <Save />
+            <GamePicker />
           </Suspense>
         ),
       },
@@ -63,11 +36,10 @@ const router = createMemoryRouter([
           </Suspense>
         ),
       },
-      // {
-      //   path: "settings",
-      //   element: <SettingsLayout />,
-      //   children: [{ index: true, element: <Settings /> }],
-      // },
+      ...GAMES.map((game) => ({
+        path: `${game.id}`,
+        children: game.routes,
+      })),
     ],
   },
 ]);

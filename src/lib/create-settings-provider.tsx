@@ -2,18 +2,21 @@ import { load, type Store } from "@tauri-apps/plugin-store";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { z, ZodObject, ZodRawShape } from "zod/v4";
 
-interface SettingsContext<T> {
-  settings: T;
-  setSetting: <K extends keyof T>(key: K, value: T[K]) => Promise<void>;
+interface SettingsContext<TOutput, TInput> {
+  settings: TOutput;
+  setSetting: <K extends keyof TInput>(key: K, value: TInput[K]) => Promise<void>;
   saveSettings: () => Promise<void>;
+  resetSettings: () => Promise<void>;
   loading: boolean;
 }
 
 export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodObject<TShape>, storeFile: string) => {
-  type Settings = z.infer<typeof schema>;
+  type Settings = z.output<typeof schema>;
+  type SettingsInput = z.input<typeof schema>;
 
   const defaults = schema.parse({}) as Settings;
-  const Context = createContext<SettingsContext<Settings> | null>(null);
+
+  const Context = createContext<SettingsContext<Settings, SettingsInput> | null>(null);
 
   const Provider = ({ children }: { children: ReactNode }) => {
     const [settings, setSettings] = useState<Settings>(defaults);
@@ -28,8 +31,8 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
     }, []);
 
     const setSetting = useCallback(
-      async <K extends keyof Settings>(key: K, value: Settings[K]) => {
-        const next = { ...settings, [key]: value };
+      async <K extends keyof SettingsInput>(key: K, value: SettingsInput[K]) => {
+        const next = schema.parse({ ...settings, [key]: value }) as Settings;
         setSettings(next);
         const store = await getStore();
         await store.set("settings", next);
@@ -43,15 +46,25 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
       await store.save();
     }, [settings, getStore]);
 
+    const resetSettings = useCallback(async () => {
+      const store = await getStore();
+      await store.reset();
+      setSettings(defaults);
+    }, [getStore]);
+
     useEffect(() => {
       getStore().then(async (store) => {
         const saved = await store.get<Settings>("settings");
-        if (saved) setSettings({ ...defaults, ...saved });
+        if (saved) setSettings(schema.parse(saved) as Settings);
         setLoading(false);
       });
     }, [getStore]);
 
-    return <Context.Provider value={{ settings, setSetting, saveSettings, loading }}>{children}</Context.Provider>;
+    return (
+      <Context.Provider value={{ settings, setSetting, saveSettings, loading, resetSettings }}>
+        {children}
+      </Context.Provider>
+    );
   };
 
   const useSettings = () => {
