@@ -17,6 +17,7 @@ export const revivalSideSettingsSchema = z.object({
   keepOfficialFriendCode: z.boolean().default(false),
 
   clientPath: z.string().default(""),
+  sourceClientPath: z.string().default(""),
   tcpPort: z.int().min(1).max(65535).default(22000),
   httpPort: z.int().min(1).max(65535).default(8088),
   wikiPort: z.int().min(1).max(65535).default(5174),

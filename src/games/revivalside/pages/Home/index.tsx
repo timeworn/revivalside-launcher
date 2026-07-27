@@ -19,6 +19,7 @@ import {
   PlayIcon,
   RocketIcon,
   SettingsIcon,
+  SnowflakeIcon,
   UsersRoundIcon,
   XIcon,
 } from "lucide-react";
@@ -117,6 +118,13 @@ export const Home = () => {
                   {busyAction === "download-client" ? <Spinner /> : <DownloadIcon />}
                 </ActionButton>
                 <ActionButton
+                  tooltip="Freeze Selected CounterSide Client"
+                  disabled={!settings.sourceClientPath || !!busyAction || listener.state !== "stopped"}
+                  onClick={() => void runAction("freeze-client")}
+                >
+                  {busyAction === "freeze-client" ? <Spinner /> : <SnowflakeIcon />}
+                </ActionButton>
+                <ActionButton
                   tooltip="Relaunch Frozen Client"
                   disabled={listener.state !== "running" || !snapshot?.frozenClientRoot || !!busyAction}
                   onClick={() => void runAction("launch-client")}
@@ -139,7 +147,7 @@ export const Home = () => {
                       ? `Start flow: ${listener.details || "Preparing local services"}`
                       : listener.state === "running"
                         ? listener.details
-                        : "Start downloads the RevivalSide client when missing, verifies local routing, then launches it automatically."}
+                        : "Start downloads the RevivalSide client when missing, applies the content-version fix, verifies local routing, then launches it automatically."}
                   </div>
                 </CardContent>
               </Card>

@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FieldGroup, Field, FieldSet, FieldDescription, FieldLabel, FieldLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ask } from "@tauri-apps/plugin-dialog";
+import { ask, open as openDialog } from "@tauri-apps/plugin-dialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { LOBBY_ACK_OPTIONS } from "@/lib/schema";
@@ -41,6 +41,16 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
     if (confirmed) await resetSettings();
   };
 
+  const browseSourceClient = async () => {
+    const selected = await openDialog({
+      title: "Select CounterSide Assembly-CSharp.dll",
+      multiple: false,
+      directory: false,
+      filters: [{ name: "CounterSide managed assembly", extensions: ["dll"] }],
+    });
+    if (typeof selected === "string") await runAction("set-source-client", { path: selected });
+  };
+
   return (
     <Dialog {...props}>
       <DialogContent className="sm:max-w-4xl" showCloseButton={false}>
@@ -64,6 +74,15 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
                         {snapshot?.frozenClientRoot ? "Verify RevivalSide Client" : "Download RevivalSide Client"}
                       </Button>
                       <Button
+                        variant="secondary"
+                        size="lg"
+                        onClick={() => void runAction("repair-content-version")}
+                        disabled={!snapshot?.frozenClientRoot || !!busyAction || listenerLocked}
+                      >
+                        <Spinner hidden={busyAction !== "repair-content-version"} />
+                        Repair Content Version
+                      </Button>
+                      <Button
                         size="lg"
                         onClick={() => void runAction("launch-client")}
                         disabled={!snapshot?.frozenClientRoot || services.listener.state !== "running" || !!busyAction}
@@ -73,6 +92,35 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
                       </Button>
                     </div>
                     <FieldDescription>{snapshot?.routing.message ?? "Checking client routing..."}</FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel>CounterSide source client</FieldLabel>
+                    <Input value={settings.sourceClientPath} readOnly placeholder="Detect or select an official CounterSide install" />
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        onClick={() => void runAction("detect-client")}
+                        disabled={!!busyAction || listenerLocked}
+                      >
+                        <Spinner hidden={busyAction !== "detect-client"} />
+                        Detect CounterSide
+                      </Button>
+                      <Button variant="secondary" size="lg" onClick={() => void browseSourceClient()} disabled={!!busyAction || listenerLocked}>
+                        Browse DLL
+                      </Button>
+                      <Button
+                        size="lg"
+                        onClick={() => void runAction("freeze-client")}
+                        disabled={!settings.sourceClientPath || !!busyAction || listenerLocked}
+                      >
+                        <Spinner hidden={busyAction !== "freeze-client"} />
+                        Freeze Selected Client
+                      </Button>
+                    </div>
+                    <FieldDescription>
+                      Freeze copies an existing official install into RevivalSide, applies offline routing and the content-version fix, and leaves the source untouched.
+                    </FieldDescription>
                   </Field>
                 </FieldGroup>
               </FieldSet>

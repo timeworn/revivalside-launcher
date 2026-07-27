@@ -5,6 +5,7 @@ export type ServicePhase = "stopped" | "starting" | "running" | "stopping";
 
 export interface RevivalSideSettings {
   clientPath: string;
+  sourceClientPath: string;
   capturePath: string;
   tcpPort: number;
   httpPort: number;
@@ -54,6 +55,7 @@ export interface LauncherSnapshot {
 
 export const DEFAULT_REVIVALSIDE_SETTINGS: RevivalSideSettings = {
   clientPath: "",
+  sourceClientPath: "",
   capturePath: "",
   tcpPort: 22000,
   httpPort: 8088,
