@@ -235,7 +235,7 @@ fn run_action_sync(
         "save-settings",
         "set-client",
         "detect-client",
-        "freeze-client",
+        "download-client",
         "launch-client",
         "verify-assets",
         "build-cache",

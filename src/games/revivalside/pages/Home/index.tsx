@@ -10,9 +10,9 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import {
-  ArchiveIcon,
   BookOpenIcon,
   ChevronDownIcon,
+  DownloadIcon,
   FolderOpenIcon,
   MenuIcon,
   PauseIcon,
@@ -28,7 +28,6 @@ import logo from "@/assets/revivalside/logo.webp";
 import { ActionButton } from "@/games/revivalside/pages/Home/ActionButton";
 import { useLauncherState } from "@/components/providers/launcher-state-provider";
 import { GameSettings } from "@/games/revivalside/pages/Home/GameSettings";
-import { ask } from "@tauri-apps/plugin-dialog";
 import { openPath, openUrl } from "@tauri-apps/plugin-opener";
 
 export const Home = () => {
@@ -82,15 +81,6 @@ export const Home = () => {
     }
   };
 
-  const freezeClient = async () => {
-    const source = settings.clientPath || "the detected CounterSide installation";
-    const confirmed = await ask(
-      `Copy ${source} into RevivalSide's frozen archive? Steam updates will not touch the frozen copy.`,
-      { title: "Freeze CounterSide client", kind: "warning" },
-    );
-    if (confirmed) await runAction("freeze-client");
-  };
-
   const button = listenerButton();
   const routingReady = snapshot?.routing.state === "ready";
 
@@ -120,11 +110,11 @@ export const Home = () => {
                   {wiki.state === "starting" ? <Spinner /> : <BookOpenIcon />}
                 </ActionButton>
                 <ActionButton
-                  tooltip="Freeze Client"
-                  disabled={!settings.clientPath || !!busyAction || listener.state !== "stopped"}
-                  onClick={() => void freezeClient()}
+                  tooltip={snapshot?.frozenClientRoot ? "RevivalSide Client Installed" : "Download RevivalSide Client"}
+                  disabled={!!busyAction || listener.state !== "stopped"}
+                  onClick={() => void runAction("download-client")}
                 >
-                  {busyAction === "freeze-client" ? <Spinner /> : <ArchiveIcon />}
+                  {busyAction === "download-client" ? <Spinner /> : <DownloadIcon />}
                 </ActionButton>
                 <ActionButton
                   tooltip="Relaunch Frozen Client"
@@ -149,7 +139,7 @@ export const Home = () => {
                       ? `Start flow: ${listener.details || "Preparing local services"}`
                       : listener.state === "running"
                         ? listener.details
-                        : "Start patches the frozen client, waits for all local services, then launches it automatically."}
+                        : "Start downloads the RevivalSide client when missing, verifies local routing, then launches it automatically."}
                   </div>
                 </CardContent>
               </Card>

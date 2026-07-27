@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FieldGroup, Field, FieldSet, FieldDescription, FieldLabel, FieldLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ask, open } from "@tauri-apps/plugin-dialog";
+import { ask } from "@tauri-apps/plugin-dialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { LOBBY_ACK_OPTIONS } from "@/lib/schema";
@@ -33,23 +33,6 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
   const [serverTime, setServerTime] = useState(localDateTimeValue);
   const listenerLocked = services.listener.state !== "stopped";
 
-  const browseForClient = async () => {
-    const selected = await open({
-      title: "Select CounterSide Assembly-CSharp.dll",
-      filters: [{ name: "Assembly-CSharp", extensions: ["dll"] }],
-      multiple: false,
-    });
-    if (typeof selected === "string") await runAction("set-client", { path: selected });
-  };
-
-  const freezeClient = async () => {
-    const confirmed = await ask(
-      "Copy the selected CounterSide install into RevivalSide's frozen archive? Steam updates will not touch the frozen copy.",
-      { title: "Freeze CounterSide client", kind: "warning" },
-    );
-    if (confirmed) await runAction("freeze-client");
-  };
-
   const reset = async () => {
     const confirmed = await ask("Reset every RevivalSide launcher setting to its default?", {
       title: "Reset launcher settings",
@@ -73,19 +56,12 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
                 <FieldLegend>Game client</FieldLegend>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel>Assembly-CSharp.dll</FieldLabel>
-                    <Input value={settings.clientPath} readOnly placeholder="No client selected..." />
+                    <FieldLabel>RevivalSide client</FieldLabel>
+                    <Input value={settings.clientPath} readOnly placeholder="Not installed yet" />
                     <div className="flex flex-wrap gap-2">
-                      <Button variant="secondary" size="lg" onClick={browseForClient} disabled={!!busyAction || listenerLocked}>
-                        Browse
-                      </Button>
-                      <Button variant="secondary" size="lg" onClick={() => void runAction("detect-client")} disabled={!!busyAction || listenerLocked}>
-                        <Spinner hidden={busyAction !== "detect-client"} />
-                        Detect
-                      </Button>
-                      <Button size="lg" onClick={() => void freezeClient()} disabled={!settings.clientPath || !!busyAction || listenerLocked}>
-                        <Spinner hidden={busyAction !== "freeze-client"} />
-                        Freeze
+                      <Button size="lg" onClick={() => void runAction("download-client")} disabled={!!busyAction || listenerLocked}>
+                        <Spinner hidden={busyAction !== "download-client"} />
+                        {snapshot?.frozenClientRoot ? "Verify RevivalSide Client" : "Download RevivalSide Client"}
                       </Button>
                       <Button
                         size="lg"

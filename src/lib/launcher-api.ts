@@ -43,7 +43,7 @@ export interface LauncherSnapshot {
     description: string;
   };
   routing: {
-    state: "missing" | "requires-freeze" | "pending" | "ready";
+    state: "missing" | "pending" | "ready";
     message: string;
   };
   dependencies: Record<string, { available: boolean; path: string }>;
