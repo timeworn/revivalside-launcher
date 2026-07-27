@@ -17,7 +17,10 @@ export interface SidebarNavItem {
 
 export const Sidebar: FC<ComponentProps<"nav">> = ({ className, children, ...props }) => {
   return (
-    <nav className={cn("sticky top-0 z-50 flex w-fit h-screen flex-col items-center gap-4 p-2", className)} {...props}>
+    <nav
+      className={cn("sticky top-0 z-50 flex w-fit h-screen flex-col items-center gap-4 px-2 py-3", className)}
+      {...props}
+    >
       {children}
     </nav>
   );

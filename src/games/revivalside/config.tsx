@@ -1,5 +1,5 @@
 // src/games/revivalside/config.tsx
-import { FileTextIcon, HomeIcon, InfoIcon, SaveIcon } from "lucide-react";
+import { CircleQuestionMarkIcon, FileTextIcon, HomeIcon, SaveIcon } from "lucide-react";
 import { lazy, Suspense } from "react";
 import type { GameConfig } from "@/games/types";
 import { getGameAssets } from "@/lib/utils";
@@ -32,7 +32,7 @@ export const revivalsideConfig: GameConfig = {
     },
     {
       name: "Help",
-      icon: InfoIcon,
+      icon: CircleQuestionMarkIcon,
       href: "",
       type: "external",
       side: "bottom",

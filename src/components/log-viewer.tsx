@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { Button } from "@/components/ui/button";
 import { useLauncherState } from "@/components/providers/launcher-state-provider";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const loggingLevels = cva("", {
   variants: {
@@ -69,11 +70,7 @@ export const LogViewer: FC<LogViewerProps> = ({ className, bodyClassName, ...pro
           Clear
         </Button>
       </div>
-      <div
-        ref={bodyRef}
-        onScroll={onScroll}
-        className={cn("h-64 overflow-y-auto p-2.5 space-y-0.5", bodyClassName)}
-      >
+      <ScrollArea ref={bodyRef} onScroll={onScroll} className={cn("h-64 p-2.5 space-y-0.5", bodyClassName)}>
         {lines.length === 0 && <div className="text-muted-foreground p-2">Service output will appear here.</div>}
         {lines.map((line) => (
           <div key={line.id} className="flex gap-2 hover:bg-foreground/10 rounded px-1 py-px">
@@ -91,7 +88,7 @@ export const LogViewer: FC<LogViewerProps> = ({ className, bodyClassName, ...pro
             <span className="text-foreground break-all whitespace-pre-wrap flex-1">{line.message}</span>
           </div>
         ))}
-      </div>
+      </ScrollArea>
       <div className="flex items-center justify-between px-3 py-1.5 border-t">
         <span className="text-muted-foreground">{lines.length} lines</span>
         <Button

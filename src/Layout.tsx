@@ -131,15 +131,18 @@ export const Layout = () => {
           </Sidebar>
         </LazyMotion>
         <div
-          className={cn("flex-1 transition-[backdrop-filter] duration-300 h-screen", !isHome && "backdrop-blur-3xl")}
+          className={cn(
+            "flex-1 transition-[backdrop-filter] duration-300 h-screen w-full overflow-hidden",
+            !isHome && "backdrop-blur-3xl",
+          )}
         >
           <ScrollArea
             className={cn(
-              "w-full h-full [&>[data-radix-scroll-area-viewport]>div]:h-full p-14",
+              "w-full h-full [&>[data-radix-scroll-area-viewport]>div]:h-full p-7",
               isHome && "**:data-[slot=scroll-area-scrollbar]:hidden",
             )}
           >
-            <AnimateYFade motionKey={location.key} className={cn("w-full h-full opacity-0", !isHome && "max-w-xl")}>
+            <AnimateYFade motionKey={location.key} className={cn("w-full h-full opacity-0 p-7", !isHome && "max-w-xl")}>
               {activeGame ? <GameSettingsProvider>{outlet}</GameSettingsProvider> : outlet}
             </AnimateYFade>
           </ScrollArea>
