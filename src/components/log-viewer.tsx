@@ -1,16 +1,8 @@
-import { useEffect, useRef, useState, useCallback, type FC, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type FC, type ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { Button } from "@/components/ui/button";
-
-type LogLevel = "info" | "warn" | "error" | "debug";
-
-interface LogEntry {
-  id: number;
-  timestamp: Date;
-  level: LogLevel;
-  message: string;
-}
+import { useLauncherState } from "@/components/providers/launcher-state-provider";
 
 const loggingLevels = cva("", {
   variants: {
@@ -23,20 +15,17 @@ const loggingLevels = cva("", {
   },
 });
 
-let _id = 0;
-const makeId = () => ++_id;
+interface LogViewerProps extends ComponentProps<"div"> {
+  bodyClassName?: string;
+}
 
-export const LogViewer: FC<ComponentProps<"div">> = ({ className, ...props }) => {
-  const [lines, setLines] = useState<LogEntry[]>([]);
+export const LogViewer: FC<LogViewerProps> = ({ className, bodyClassName, ...props }) => {
+  const { logs, clearLogs } = useLauncherState();
   const [paused, setPaused] = useState(false);
+  const [pausedLines, setPausedLines] = useState(logs);
   const bodyRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
-  const pausedRef = useRef(paused);
-
-  const append = useCallback((level: LogLevel, message: string) => {
-    if (pausedRef.current) return;
-    setLines((prev) => [...prev, { id: makeId(), timestamp: new Date(), level, message }]);
-  }, []);
+  const lines = paused ? pausedLines : logs;
 
   const onScroll = () => {
     const current = bodyRef.current;
@@ -51,14 +40,10 @@ export const LogViewer: FC<ComponentProps<"div">> = ({ className, ...props }) =>
     }
   }, [lines]);
 
-  useEffect(() => {
-    const levels: LogLevel[] = ["info", "warn", "error", "debug"];
-    const interval = setInterval(() => {
-      const level = levels[Math.floor(Math.random() * levels.length)];
-      append(level, `This is a ${level} message`);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [append]);
+  const togglePaused = () => {
+    if (!paused) setPausedLines(logs);
+    setPaused((current) => !current);
+  };
 
   return (
     <div
@@ -72,19 +57,24 @@ export const LogViewer: FC<ComponentProps<"div">> = ({ className, ...props }) =>
               "absolute h-full w-full rounded-full opacity-75",
               paused ? "bg-amber-400" : "bg-green-500 animate-ping",
             )}
-          ></span>
+          />
           <span className={cn("w-full h-full rounded-full", paused ? "bg-amber-500" : "bg-green-600")} />
         </span>
         <span className="text-muted-foreground">{paused ? "Paused" : "Live"}</span>
         <div className="flex-1" />
-        <Button variant="outline" size="xs" onClick={() => setPaused((p) => !p)}>
+        <Button variant="outline" size="xs" onClick={togglePaused}>
           {paused ? "Resume" : "Pause"}
         </Button>
-        <Button variant="outline" size="xs" onClick={() => setLines([])}>
+        <Button variant="outline" size="xs" onClick={clearLogs}>
           Clear
         </Button>
       </div>
-      <div ref={bodyRef} onScroll={onScroll} className="h-64 overflow-y-auto p-2.5 space-y-0.5">
+      <div
+        ref={bodyRef}
+        onScroll={onScroll}
+        className={cn("h-64 overflow-y-auto p-2.5 space-y-0.5", bodyClassName)}
+      >
+        {lines.length === 0 && <div className="text-muted-foreground p-2">Service output will appear here.</div>}
         {lines.map((line) => (
           <div key={line.id} className="flex gap-2 hover:bg-foreground/10 rounded px-1 py-px">
             <span className="text-muted-foreground/60 shrink-0 tabular-nums select-none">

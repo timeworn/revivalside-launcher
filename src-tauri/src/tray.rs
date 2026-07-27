@@ -10,8 +10,9 @@ pub fn setup_tray(app: &mut App) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&open_i, &quit_i])?;
 
-    TrayIconBuilder::new()
+    TrayIconBuilder::with_id("revivalside-tray")
         .icon(app.default_window_icon().unwrap().clone())
+        .tooltip("RevivalSide Launcher")
         .menu(&menu)
         .show_menu_on_left_click(false) // left click = toggle window, not menu
         .on_menu_event(|app, event| match event.id.as_ref() {
