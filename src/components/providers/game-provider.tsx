@@ -42,8 +42,7 @@ export const GameProvider = ({ games, children }: { games: GameConfig[]; childre
 
   useEffect(() => {
     if (!settings.activeGameId) {
-      if (games.length === 1) {
-        setActiveGameState(games[0]);
+      if (games.length > 0) {
         navigate(`/${games[0].id}`);
         return;
       }

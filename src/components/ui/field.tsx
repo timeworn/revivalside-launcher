@@ -5,6 +5,10 @@ import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
+const FieldSetGroup = ({ className, ...props }: React.ComponentProps<"div">) => {
+  return <div data-slot="field-set-group" className={cn("space-y-6", className)} {...props} />;
+};
+
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
     <fieldset
@@ -214,6 +218,7 @@ export {
   FieldLegend,
   FieldSeparator,
   FieldSet,
+  FieldSetGroup,
   FieldContent,
   FieldTitle,
 };

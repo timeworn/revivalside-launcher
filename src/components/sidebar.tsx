@@ -38,7 +38,7 @@ interface SidebarItemProps extends ComponentProps<"div"> {
   animate?: boolean;
 }
 
-export const SidebarItem: FC<SidebarItemProps> = ({ item, className, delay, animate }) => {
+export const SidebarItem: FC<SidebarItemProps> = ({ item, className, delay, animate = true }) => {
   item = {
     type: "link",
     ...item,

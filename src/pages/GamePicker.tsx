@@ -1,4 +1,4 @@
-import { useGame } from "@/games/GameProvider";
+import { useGame } from "@/components/providers/game-provider";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";

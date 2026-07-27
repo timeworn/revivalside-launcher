@@ -3,17 +3,10 @@ import { FileTextIcon, HomeIcon, InfoIcon, SaveIcon } from "lucide-react";
 import { lazy, Suspense } from "react";
 import type { GameConfig } from "@/games/types";
 import { getGameAssets } from "@/lib/utils";
-import { createSettingsProvider } from "@/lib/create-settings-provider";
-import { revivalSideSettingsSchema } from "@/lib/schema";
 
 const Home = lazy(() => import("./pages/Home").then((m) => ({ default: m.Home })));
 const Save = lazy(() => import("./pages/Save").then((m) => ({ default: m.Save })));
 const Logs = lazy(() => import("./pages/Logs").then((m) => ({ default: m.Logs })));
-
-export const { Provider: RevivalSideSettingsProvider, useSettings: useRevivalSideSettings } = createSettingsProvider(
-  revivalSideSettingsSchema,
-  "revivalside.json",
-);
 
 export const revivalsideConfig: GameConfig = {
   id: "revivalside",
@@ -21,7 +14,6 @@ export const revivalsideConfig: GameConfig = {
   description:
     "A world where conflict never ends between Counters and Corrupted Objects after the Administration Failure. We invite you to a journey to save the Reality.",
   assets: getGameAssets("revivalside"),
-  SettingsProvider: RevivalSideSettingsProvider,
   sidebarItems: [
     {
       name: "Home",
@@ -41,7 +33,7 @@ export const revivalsideConfig: GameConfig = {
     {
       name: "Help",
       icon: InfoIcon,
-      href: "https://discord.gg/9FryPYZSjH",
+      href: "",
       type: "external",
       side: "bottom",
     },

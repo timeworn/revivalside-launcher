@@ -17,5 +17,5 @@ export interface GameConfig {
   assets?: GameAssets;
   sidebarItems: SidebarNavItem[];
   routes: RouteObject[];
-  SettingsProvider: ComponentType<{ children: ReactNode }>;
+  SettingsProvider?: ComponentType<{ children: ReactNode }>;
 }

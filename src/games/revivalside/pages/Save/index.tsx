@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+  FieldSetGroup,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
@@ -19,7 +27,8 @@ interface CrossSaveResult {
 }
 
 export const Save = () => {
-  const { settings, setSetting, services, busyAction, lastError, runAction, startService, stopService } = useLauncherState();
+  const { settings, setSetting, services, busyAction, lastError, runAction, startService, stopService } =
+    useLauncherState();
   const [result, setResult] = useState<CrossSaveResult | null>(null);
   const capture = services.capture;
   const captureBusy = capture.state === "starting" || capture.state === "stopping";
@@ -41,27 +50,43 @@ export const Save = () => {
   };
 
   return (
-    <FieldGroup className="max-w-3xl">
+    <FieldSetGroup className="max-w-3xl h-200">
       <FieldSet>
         <FieldLegend>Live official profile capture</FieldLegend>
         <FieldDescription>
-          Listen on every interface with Wireshark, then extract the latest JOIN_LOBBY_ACK and import it into RevivalSide.
+          Listen on every interface with Wireshark, then extract the latest JOIN_LOBBY_ACK and import it into
+          RevivalSide.
         </FieldDescription>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="capture-folder">Capture Folder</FieldLabel>
             <div className="flex gap-2">
               <Input id="capture-folder" value={settings.capturePath} placeholder="Default captures folder" readOnly />
-              <Button variant="secondary" size="lg" onClick={chooseCaptureFolder} disabled={capture.state !== "stopped"}>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={chooseCaptureFolder}
+                disabled={capture.state !== "stopped"}
+              >
                 Browse
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button variant="secondary" size="lg" onClick={toggleCapture} disabled={captureBusy || !!busyAction}>
                 {captureBusy && <Spinner />}
-                <span>{capture.state === "running" ? "Stop Listening" : capture.state === "starting" ? "Starting..." : "Start Listening"}</span>
+                <span>
+                  {capture.state === "running"
+                    ? "Stop Listening"
+                    : capture.state === "starting"
+                      ? "Starting..."
+                      : "Start Listening"}
+                </span>
               </Button>
-              <Button size="lg" onClick={() => void extractAndCopy()} disabled={capture.state !== "stopped" || !!busyAction}>
+              <Button
+                size="lg"
+                onClick={() => void extractAndCopy()}
+                disabled={capture.state !== "stopped" || !!busyAction}
+              >
                 <Spinner hidden={busyAction !== "extract-cross-save"} />
                 <span>{busyAction === "extract-cross-save" ? "Extracting and Importing..." : "Extract and Copy"}</span>
               </Button>
@@ -72,40 +97,60 @@ export const Save = () => {
           </Field>
         </FieldGroup>
       </FieldSet>
-
       <FieldSet>
         <FieldLegend>Import options</FieldLegend>
         <FieldGroup>
           <Field orientation="horizontal">
-            <Switch id="switch-imported-save" checked={settings.switchToImportedSave}
-              onCheckedChange={(checked) => setSetting("switchToImportedSave", checked)} disabled={!!busyAction} />
+            <Switch
+              id="switch-imported-save"
+              checked={settings.switchToImportedSave}
+              onCheckedChange={(checked) => setSetting("switchToImportedSave", checked)}
+              disabled={!!busyAction}
+            />
             <FieldLabel htmlFor="switch-imported-save">Switch to imported save</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="update-matching-import" checked={settings.updateMatchingImport}
-              onCheckedChange={(checked) => setSetting("updateMatchingImport", checked)} disabled={!!busyAction} />
+            <Switch
+              id="update-matching-import"
+              checked={settings.updateMatchingImport}
+              onCheckedChange={(checked) => setSetting("updateMatchingImport", checked)}
+              disabled={!!busyAction}
+            />
             <FieldLabel htmlFor="update-matching-import">Update matching official import</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="keep-uid" checked={settings.keepOfficialUid}
-              onCheckedChange={(checked) => setSetting("keepOfficialUid", checked)} disabled={!!busyAction} />
+            <Switch
+              id="keep-uid"
+              checked={settings.keepOfficialUid}
+              onCheckedChange={(checked) => setSetting("keepOfficialUid", checked)}
+              disabled={!!busyAction}
+            />
             <FieldLabel htmlFor="keep-uid">Keep official UID</FieldLabel>
           </Field>
           <Field orientation="horizontal">
-            <Switch id="keep-fc" checked={settings.keepOfficialFriendCode}
-              onCheckedChange={(checked) => setSetting("keepOfficialFriendCode", checked)} disabled={!!busyAction} />
+            <Switch
+              id="keep-fc"
+              checked={settings.keepOfficialFriendCode}
+              onCheckedChange={(checked) => setSetting("keepOfficialFriendCode", checked)}
+              disabled={!!busyAction}
+            />
             <FieldLabel htmlFor="keep-fc">Keep official friend code</FieldLabel>
           </Field>
         </FieldGroup>
       </FieldSet>
-
       <FieldSet>
         <FieldLegend>Result</FieldLegend>
         <FieldGroup>
           <Field>
             <FieldLabel>{result ? `Imported from ${result.source.id}` : "Idle"}</FieldLabel>
-            <FieldDescription>{result?.copyPath ?? lastError ?? "The imported profile and export path will appear here."}</FieldDescription>
-            <Textarea className="min-h-56 font-mono" value={result ? JSON.stringify(result.imported, null, 2) : ""} readOnly />
+            <FieldDescription>
+              {result?.copyPath ?? lastError ?? "The imported profile and export path will appear here."}
+            </FieldDescription>
+            <Textarea
+              className="min-h-56 font-mono"
+              value={result ? JSON.stringify(result.imported, null, 2) : ""}
+              readOnly
+            />
             {result && (
               <Button variant="secondary" size="lg" onClick={() => openPath(result.copyPath)}>
                 <FolderOpenIcon /> Open exported users.json
@@ -114,6 +159,6 @@ export const Save = () => {
           </Field>
         </FieldGroup>
       </FieldSet>
-    </FieldGroup>
+    </FieldSetGroup>
   );
 };
