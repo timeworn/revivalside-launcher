@@ -8,6 +8,7 @@ import { revivalSideSettingsSchema } from "@/lib/schema";
 
 const Home = lazy(() => import("./pages/Home").then((m) => ({ default: m.Home })));
 const Save = lazy(() => import("./pages/Save").then((m) => ({ default: m.Save })));
+const Logs = lazy(() => import("./pages/Logs").then((m) => ({ default: m.Logs })));
 
 export const { Provider: RevivalSideSettingsProvider, useSettings: useRevivalSideSettings } = createSettingsProvider(
   revivalSideSettingsSchema,
@@ -35,8 +36,7 @@ export const revivalsideConfig: GameConfig = {
     {
       name: "Logs",
       icon: FileTextIcon,
-      href: "#",
-      type: "folder",
+      href: "/logs",
     },
     {
       name: "Help",
@@ -60,6 +60,14 @@ export const revivalsideConfig: GameConfig = {
       element: (
         <Suspense>
           <Save />
+        </Suspense>
+      ),
+    },
+    {
+      path: "logs",
+      element: (
+        <Suspense>
+          <Logs />
         </Suspense>
       ),
     },

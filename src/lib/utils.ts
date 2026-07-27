@@ -26,14 +26,14 @@ export const getRandomItem = <T>(items: T[]): T | null => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
-const allMainBgs = import.meta.glob("@/assets/*/main.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allFeaturedBgs = import.meta.glob("@/assets/*/featured.{webp,png,jpg,jpeg,avif}", {
+const allMainBgs = import.meta.glob("@/assets/revivalside/main.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
+const allFeaturedBgs = import.meta.glob("@/assets/revivalside/featured.{webp,png,jpg,jpeg,avif}", {
   eager: true,
   import: "default",
 });
-const allBgs = import.meta.glob("@/assets/*/bg/**/*.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allFavicons = import.meta.glob("@/assets/*/favicon.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allLogos = import.meta.glob("@/assets/*/logo.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
+const allBgs = import.meta.glob("@/assets/revivalside/bg/**/*.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
+const allFavicons = import.meta.glob("@/assets/revivalside/favicon.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
+const allLogos = import.meta.glob("@/assets/revivalside/logo.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
 
 export const getGameAssets = (gameId: string): GameAssets => {
   const mainBackground = Object.entries(allMainBgs).find(([path]) =>
@@ -45,8 +45,6 @@ export const getGameAssets = (gameId: string): GameAssets => {
   const backgrounds = Object.entries(allBgs)
     .filter(([path]) => path.includes(`/assets/${gameId}/bg/`))
     .map(([, url]) => url as string);
-
-  console.log(mainBackground, allMainBgs, allFeaturedBgs, gameId);
 
   const favicon = Object.entries(allFavicons).find(([path]) => path.includes(`/assets/${gameId}/`))?.[1] as string;
   const logo = Object.entries(allLogos).find(([path]) => path.includes(`/assets/${gameId}/`))?.[1] as string;

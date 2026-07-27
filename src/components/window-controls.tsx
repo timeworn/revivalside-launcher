@@ -1,16 +1,21 @@
 import { useSettings } from "@/components/providers/settings-provider";
+import { useLauncherState } from "@/components/providers/launcher-state-provider";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { MinusIcon, XIcon, SquareIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const WindowControls = () => {
-  const { settings } = useSettings();
+  const { settings: appSettings } = useSettings();
+  const { settings, services } = useLauncherState();
   const win = getCurrentWindow();
   const [isResiazble, setIsResizable] = useState(false);
 
   const handleClose = async () => {
-    await invoke("close_window", { behavior: settings.closeWindow });
+    const hasRunningServices = Object.values(services).some((service) => service.state !== "stopped");
+    const configured = appSettings.closeWindow === "tray_on_start" ? "exit" : appSettings.closeWindow;
+    const behavior = settings.minimizeToTray && hasRunningServices ? "tray" : configured;
+    await invoke("close_window", { behavior });
   };
 
   useEffect(() => {
