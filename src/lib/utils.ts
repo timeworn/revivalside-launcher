@@ -51,3 +51,11 @@ export const getGameAssets = (gameId: string): GameAssets => {
 
   return { backgrounds, favicon, logo, mainBackground, featuredBackground };
 };
+
+export const formatHms = (seconds: number) => {
+  const s = Math.max(0, Math.floor(seconds));
+  const hh = String(Math.floor(s / 3600)).padStart(2, "0");
+  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+  const ss = String(s % 60).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+};

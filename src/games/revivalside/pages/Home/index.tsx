@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -30,6 +29,7 @@ import { useLauncherState } from "@/components/providers/launcher-state-provider
 import { GameSettings } from "@/games/revivalside/pages/Home/GameSettings";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { openPath, openUrl } from "@tauri-apps/plugin-opener";
+import { ServerLaunchButton } from "@/games/revivalside/pages/Home/server-launch-button";
 
 export const Home = () => {
   const { snapshot, settings, services, busyAction, lastError, clearError, startService, stopService, runAction } =
@@ -54,6 +54,7 @@ export const Home = () => {
   };
 
   const listenerButton = () => {
+    return { icon: <PauseIcon color="relative" />, text: "Stop Server" };
     if (listener.state === "running") return { icon: <PauseIcon color="relative" />, text: "Stop Server" };
     if (listener.state === "starting") return { icon: <Spinner />, text: listener.details || "Starting..." };
     if (listener.state === "stopping") return { icon: <Spinner />, text: "Stopping..." };
@@ -174,21 +175,28 @@ export const Home = () => {
         </div>
 
         <div className="absolute bottom-0 right-0 z-10 flex items-end gap-2">
-          <Button
-            className="h-14 group border-none gap-4 flex px-7 justify-center items-center rounded-full"
+          <ServerLaunchButton
             onClick={toggleListener}
             disabled={listenerBusy}
-          >
-            <span
-              className={cn(
-                "*:size-5!",
-                !listenerBusy ? "*:fill-primary-foreground *:group-hover:fill-primary *:transition-colors" : "",
-              )}
-            >
-              {button.icon}
-            </span>
-            <span className="text-lg font-extrabold">{button.text}</span>
-          </Button>
+            tooltip={listener.state === "starting" ? "Preparing local services" : undefined}
+            state={
+              true
+                ? {
+                    mode: "progress",
+                    percent: 10,
+                    secondsLeft: 1212,
+                    paused: false,
+                    label: "Downloading...",
+                  }
+                : {
+                    mode: "action",
+                    icon: button.icon,
+                    text: button.text,
+                    hoverIcon: listener.state === "running" ? <PauseIcon color="relative" /> : undefined,
+                    hoverText: listener.state === "running" ? "Stop Server" : undefined,
+                  }
+            }
+          />
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <ActionButton size="action-icon">
