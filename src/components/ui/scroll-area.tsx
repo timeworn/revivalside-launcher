@@ -12,7 +12,7 @@ function ScrollArea({ className, children, ...props }: React.ComponentProps<type
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
-      <ScrollBar className="data-vertical:w-1.75 hover:data-vertical:w-2" />
+      <ScrollBar className="data-vertical:w-2 hover:data-vertical:w-2.5" />
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   );
@@ -36,7 +36,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-primary/80"
+        className="relative flex-1 rounded-full bg-secondary border-foreground/20 border"
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );
