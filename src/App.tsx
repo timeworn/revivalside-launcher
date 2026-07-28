@@ -5,11 +5,10 @@ import { lazy, Suspense } from "react";
 import { revivalsideConfig } from "@/games/revivalside/config";
 import { GamePicker } from "@/pages/GamePicker";
 import { Providers } from "@/components/providers";
-import { starSaviorConfig } from "@/games/starsavior/config";
 
 const Settings = lazy(() => import("@/pages/Settings").then((m) => ({ default: m.Settings })));
 
-const GAMES = [revivalsideConfig, starSaviorConfig];
+const GAMES = [revivalsideConfig];
 
 const router = createMemoryRouter([
   {

@@ -5,10 +5,11 @@ import { cn, getRandomItem } from "@/lib/utils";
 import { WindowControls } from "@/components/window-controls";
 import { Separator } from "@/components/ui/separator";
 import { LayoutGridIcon, SettingsIcon } from "lucide-react";
-import { useGame } from "@/games/GameProvider";
+import { useGame } from "@/components/providers/game-provider";
 import { AnimateYFade } from "@/components/animate-y-fade";
 import * as m from "motion/react-m";
 import { AnimatePresence, domAnimation, LazyMotion } from "motion/react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const defaultItems: SidebarNavItem[] = [
   {
@@ -33,7 +34,10 @@ export const Layout = () => {
 
   const items: SidebarNavItem[] = [
     ...(activeGame?.sidebarItems
-      ? activeGame.sidebarItems.map((item) => ({ ...item, href: `/${activeGame.id}${item.href}` }))
+      ? activeGame.sidebarItems.map((item) => ({
+          ...item,
+          href: !item.type || item.type === "link" ? `/${activeGame.id}${item.href}` : item.href,
+        }))
       : []),
     ...defaultItems,
   ];
@@ -128,13 +132,20 @@ export const Layout = () => {
         </LazyMotion>
         <div
           className={cn(
-            "flex-1 transition-[backdrop-filter] p-14  duration-300 h-screen overflow-hidden",
-            !isHome && "backdrop-blur-3xl overflow-y-scroll",
+            "flex-1 transition-[backdrop-filter] duration-300 h-screen w-full overflow-hidden",
+            !isHome && "backdrop-blur-3xl",
           )}
         >
-          <AnimateYFade motionKey={location.key} className={cn("w-full h-full opacity-0", !isHome && "max-w-xl")}>
-            {activeGame ? <GameSettingsProvider>{outlet}</GameSettingsProvider> : outlet}
-          </AnimateYFade>
+          <ScrollArea
+            className={cn(
+              "w-full h-full [&>[data-radix-scroll-area-viewport]>div]:h-full p-7",
+              isHome && "**:data-[slot=scroll-area-scrollbar]:hidden",
+            )}
+          >
+            <AnimateYFade motionKey={location.key} className={cn("w-full h-full opacity-0 p-7", !isHome && "max-w-xl")}>
+              {activeGame ? <GameSettingsProvider>{outlet}</GameSettingsProvider> : outlet}
+            </AnimateYFade>
+          </ScrollArea>
         </div>
       </div>
     </>

@@ -191,7 +191,9 @@ fn resolve_node(app_root: &Path) -> Result<PathBuf, String> {
     candidates
         .into_iter()
         .find(|candidate| candidate.is_file())
-        .ok_or_else(|| "Node.js was not found. Install Node.js or use a packaged RevivalSide runtime.".into())
+        .ok_or_else(|| {
+            "Node.js was not found. Install Node.js or use a packaged RevivalSide runtime.".into()
+        })
 }
 
 fn configure_hidden(command: &mut Command) {
@@ -332,8 +334,13 @@ async fn run_launcher_action(
 ) -> Result<Value, String> {
     if action == "launch-client" {
         let current = state.services.lock().unwrap();
-        if current.get("listener").is_none_or(|service| service.state != "running") {
-            return Err("Start the RevivalSide listener before launching the frozen client.".into());
+        if current
+            .get("listener")
+            .is_none_or(|service| service.state != "running")
+        {
+            return Err(
+                "Start the RevivalSide listener before launching the frozen client.".into(),
+            );
         }
     }
     let app_root = state.app_root.clone();
@@ -465,7 +472,11 @@ fn stop_process_tree(pid: u32) -> Result<(), String> {
         .args(["-TERM", &pid.to_string()])
         .status()
         .map_err(|error| error.to_string())?;
-    if status.success() { Ok(()) } else { Err(format!("kill failed for PID {pid}")) }
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("kill failed for PID {pid}"))
+    }
 }
 
 #[tauri::command]

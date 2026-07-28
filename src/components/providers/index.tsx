@@ -1,7 +1,7 @@
 import { LauncherStateProvider } from "@/components/providers/launcher-state-provider";
 import { SettingsProvider } from "@/components/providers/settings-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { GameProvider } from "@/games/GameProvider";
+import { GameProvider } from "@/components/providers/game-provider";
 import type { GameConfig } from "@/games/types";
 import type { FC, ReactNode } from "react";
 
