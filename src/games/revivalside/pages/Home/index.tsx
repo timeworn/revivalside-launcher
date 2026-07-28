@@ -9,7 +9,6 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import {
-  ArchiveIcon,
   BookOpenIcon,
   ChevronDownIcon,
   FolderOpenIcon,
@@ -18,6 +17,7 @@ import {
   PlayIcon,
   RocketIcon,
   SettingsIcon,
+  SnowflakeIcon,
   UsersRoundIcon,
   XIcon,
 } from "lucide-react";
@@ -27,7 +27,6 @@ import logo from "@/assets/revivalside/logo.webp";
 import { ActionButton } from "@/games/revivalside/pages/Home/ActionButton";
 import { useLauncherState } from "@/components/providers/launcher-state-provider";
 import { GameSettings } from "@/games/revivalside/pages/Home/GameSettings";
-import { ask } from "@tauri-apps/plugin-dialog";
 import { openPath, openUrl } from "@tauri-apps/plugin-opener";
 import { ServerLaunchButton } from "@/games/revivalside/pages/Home/server-launch-button";
 
@@ -74,15 +73,6 @@ export const Home = () => {
     }
   };
 
-  const freezeClient = async () => {
-    const source = settings.clientPath || "the detected CounterSide installation";
-    const confirmed = await ask(
-      `Copy ${source} into RevivalSide's frozen archive? Steam updates will not touch the frozen copy.`,
-      { title: "Freeze CounterSide client", kind: "warning" },
-    );
-    if (confirmed) await runAction("freeze-client");
-  };
-
   const button = listenerButton();
   const routingReady = snapshot?.routing.state === "ready";
 
@@ -115,10 +105,10 @@ export const Home = () => {
               </ActionButton>
               <ActionButton
                 tooltip="Freeze Client"
-                disabled={!settings.clientPath || !!busyAction || listener.state !== "stopped"}
+                disabled={!settings.sourceClientPath || !!busyAction || listener.state !== "stopped"}
                 onClick={() => void freezeClient()}
               >
-                {busyAction === "freeze-client" ? <Spinner /> : <ArchiveIcon />}
+                {busyAction === "freeze-client" ? <Spinner /> : <SnowflakeIcon />}
               </ActionButton>
               <ActionButton
                 tooltip="Relaunch Frozen Client"

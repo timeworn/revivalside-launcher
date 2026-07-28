@@ -14,6 +14,8 @@ export const revivalSideSettingsSchema = z.object({
   allowLanAccess: z.boolean().default(false),
   capturePath: z.string().default(""),
   clientPath: z.string().default(""),
+  sourceClientPath: z.string().default(""),
+  tcpPort: z.int().min(1).max(65535).default(22000),
   eventDate: z.string().default("2025-04-10"),
   httpPort: z.int().min(1).max(65535).default(8088),
   keepOfficialFriendCode: z.boolean().default(false),

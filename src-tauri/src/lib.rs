@@ -236,6 +236,7 @@ fn run_action_sync(
         "snapshot",
         "save-settings",
         "set-client",
+        "set-source-client",
         "detect-client",
         "freeze-client",
         "launch-client",
