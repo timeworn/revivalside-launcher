@@ -67,21 +67,8 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
                 <FieldGroup>
                   <Field>
                     <FieldLabel>RevivalSide client</FieldLabel>
-                    <Input value={settings.clientPath} readOnly placeholder="Not installed yet" />
+                    <Input value={settings.clientPath} readOnly placeholder="No frozen client installed" />
                     <div className="flex flex-wrap gap-2">
-                      <Button size="lg" onClick={() => void runAction("download-client")} disabled={!!busyAction || listenerLocked}>
-                        <Spinner hidden={busyAction !== "download-client"} />
-                        {snapshot?.frozenClientRoot ? "Verify RevivalSide Client" : "Download RevivalSide Client"}
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="lg"
-                        onClick={() => void runAction("repair-content-version")}
-                        disabled={!snapshot?.frozenClientRoot || !!busyAction || listenerLocked}
-                      >
-                        <Spinner hidden={busyAction !== "repair-content-version"} />
-                        Repair Content Version
-                      </Button>
                       <Button
                         size="lg"
                         onClick={() => void runAction("launch-client")}
@@ -119,7 +106,7 @@ export const GameSettings: FC<ComponentProps<typeof Dialog>> = ({ ...props }) =>
                       </Button>
                     </div>
                     <FieldDescription>
-                      Freeze copies an existing official install into RevivalSide, applies offline routing and the content-version fix, and leaves the source untouched.
+                      Freeze copies an existing official install into RevivalSide, applies offline routing and Steam isolation, and leaves the client's content-version and table loading intact.
                     </FieldDescription>
                   </Field>
                 </FieldGroup>

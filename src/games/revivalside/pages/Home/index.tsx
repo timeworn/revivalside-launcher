@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 import {
   BookOpenIcon,
   ChevronDownIcon,
-  DownloadIcon,
   FolderOpenIcon,
   MenuIcon,
   PauseIcon,
@@ -111,13 +110,6 @@ export const Home = () => {
                   {wiki.state === "starting" ? <Spinner /> : <BookOpenIcon />}
                 </ActionButton>
                 <ActionButton
-                  tooltip={snapshot?.frozenClientRoot ? "RevivalSide Client Installed" : "Download RevivalSide Client"}
-                  disabled={!!busyAction || listener.state !== "stopped"}
-                  onClick={() => void runAction("download-client")}
-                >
-                  {busyAction === "download-client" ? <Spinner /> : <DownloadIcon />}
-                </ActionButton>
-                <ActionButton
                   tooltip="Freeze Selected CounterSide Client"
                   disabled={!settings.sourceClientPath || !!busyAction || listener.state !== "stopped"}
                   onClick={() => void runAction("freeze-client")}
@@ -147,7 +139,7 @@ export const Home = () => {
                       ? `Start flow: ${listener.details || "Preparing local services"}`
                       : listener.state === "running"
                         ? listener.details
-                        : "Start downloads the RevivalSide client when missing, applies the content-version fix, verifies local routing, then launches it automatically."}
+                        : "Start prepares the installed frozen client, verifies local routing, then launches it automatically."}
                   </div>
                 </CardContent>
               </Card>
