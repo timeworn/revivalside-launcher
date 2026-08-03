@@ -22,20 +22,25 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
     const [settings, setSettings] = useState<Settings>(defaults);
     const [loading, setLoading] = useState(true);
     const storeRef = useRef<Store | null>(null);
+    const settingsRef = useRef(settings);
+    settingsRef.current = settings;
 
     const getStore = useCallback(async (): Promise<Store> => {
       if (storeRef.current) return storeRef.current;
-      const store = await load(storeFile, { defaults, autoSave: true });
+      const store = await load(storeFile);
       storeRef.current = store;
       return store;
     }, []);
 
     const setSetting = useCallback(
       async <K extends keyof SettingsInput>(key: K, value: SettingsInput[K]) => {
-        const next = schema.parse({ ...settings, [key]: value }) as Settings;
+        const next = schema.parse({ ...settingsRef.current, [key]: value }) as Settings;
+        settingsRef.current = next;
         setSettings(next);
+
         const store = await getStore();
-        await store.set("settings", next);
+        await store.set(key as string, next[key as unknown as keyof Settings]);
+        await store.save();
       },
       [settings, getStore],
     );
@@ -43,10 +48,13 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
     const saveSettings = useCallback(async () => {
       try {
         const store = await getStore();
-        await store.set("settings", settings);
+        for (const [key, value] of Object.entries(settings)) {
+          await store.set(key, value);
+        }
         await store.save();
         return true;
-      } catch {
+      } catch (error) {
+        console.error("Error saving settings:", error);
         return false;
       }
     }, [settings, getStore]);
@@ -54,15 +62,27 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
     const resetSettings = useCallback(async () => {
       const store = await getStore();
       await store.reset();
+      settingsRef.current = defaults;
       setSettings(defaults);
     }, [getStore]);
 
     useEffect(() => {
-      getStore().then(async (store) => {
-        const saved = await store.get<Settings>("settings");
-        if (saved) setSettings(schema.parse(saved) as Settings);
-        setLoading(false);
-      });
+      let mounted = true;
+      getStore()
+        .then(async (store) => {
+          const saved = await store.entries();
+          const parsed = schema.parse(Object.fromEntries(saved)) as Settings;
+          if (!mounted) return;
+          settingsRef.current = parsed;
+          setSettings(parsed);
+        })
+        .catch((error) => console.error("Error loading settings:", error))
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+      return () => {
+        mounted = false;
+      };
     }, [getStore]);
 
     return (
