@@ -196,7 +196,7 @@ fn resolve_node(app_root: &Path) -> Result<PathBuf, String> {
         })
 }
 
-fn configure_hidden(command: &mut Command) {
+fn configure_hidden(_command: &mut Command) {
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -538,7 +538,12 @@ pub fn run() {
         services: Arc::new(Mutex::new(HashMap::new())),
     };
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
+        }))
         .manage(state)
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
