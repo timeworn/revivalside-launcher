@@ -1,8 +1,8 @@
-// src/games/revivalside/config.tsx
-import { CircleQuestionMarkIcon, FileTextIcon, HomeIcon, SaveIcon } from "lucide-react";
+import { BookTextIcon, FileTextIcon, HomeIcon, SaveIcon } from "lucide-react";
 import { lazy, Suspense } from "react";
 import type { GameConfig } from "@/games/types";
 import { getGameAssets } from "@/lib/utils";
+import { SiDiscord } from "@icons-pack/react-simple-icons";
 
 const Home = lazy(() => import("./pages/Home").then((m) => ({ default: m.Home })));
 const Save = lazy(() => import("./pages/Save").then((m) => ({ default: m.Save })));
@@ -31,9 +31,16 @@ export const revivalsideConfig: GameConfig = {
       href: "/logs",
     },
     {
-      name: "Help",
-      icon: CircleQuestionMarkIcon,
-      href: "",
+      name: "Docs",
+      icon: BookTextIcon,
+      href: "https://docs.timeworn.net/revivalside",
+      type: "external",
+      side: "bottom",
+    },
+    {
+      name: "Discord",
+      icon: SiDiscord,
+      href: "https://discord.gg/sFVhrBkZxt",
       type: "external",
       side: "bottom",
     },
