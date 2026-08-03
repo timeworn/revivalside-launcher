@@ -26,7 +26,7 @@ export const ServerLaunchButton: FC<ServerLaunchButtonProps> = ({ onClick, disab
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={cn(
-        "group h-14 min-w-48 border-none gap-4 flex px-7 justify-center items-center rounded-full",
+        " group h-14 min-w-56 border-none gap-4 flex px-4 justify-center items-center rounded-full",
         "bg-primary text-primary-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors",
         !disabled && "hover:bg-primary-foreground hover:text-primary",
         state.mode === "progress" && "bg-primary-foreground text-foreground",

@@ -12,16 +12,7 @@ import {
 } from "@/lib/launcher-api";
 import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export type LogLevel = "info" | "warn" | "error" | "debug";
 
@@ -42,6 +33,7 @@ interface LauncherStateContextValue {
   loading: boolean;
   busyAction: string | null;
   lastError: string | null;
+  appendLog: (level: LogLevel, message: string) => void;
   setSetting: <K extends keyof RevivalSideSettings>(key: K, value: RevivalSideSettings[K]) => void;
   saveSettings: () => Promise<void>;
   resetSettings: () => Promise<void>;
@@ -78,10 +70,7 @@ export const LauncherStateProvider = ({ children }: { children: ReactNode }) => 
   }, [settings]);
 
   const appendLog = useCallback((level: LogLevel, message: string) => {
-    setLogs((current) => [
-      ...current.slice(-1999),
-      { id: ++logId, timestamp: new Date(), level, message },
-    ]);
+    setLogs((current) => [...current.slice(-1999), { id: ++logId, timestamp: new Date(), level, message }]);
   }, []);
 
   const refresh = useCallback(async () => {
@@ -100,63 +89,72 @@ export const LauncherStateProvider = ({ children }: { children: ReactNode }) => 
     settingsRef.current = result.settings;
   }, []);
 
-  const setSetting = useCallback(<K extends keyof RevivalSideSettings>(key: K, value: RevivalSideSettings[K]) => {
-    setSettings((current) => {
-      const next = { ...current, [key]: value };
-      settingsRef.current = next;
-      return next;
-    });
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      saveSettings().catch((error) => setLastError(errorMessage(error)));
-    }, 450);
-  }, [saveSettings]);
+  const setSetting = useCallback(
+    <K extends keyof RevivalSideSettings>(key: K, value: RevivalSideSettings[K]) => {
+      setSettings((current) => {
+        const next = { ...current, [key]: value };
+        settingsRef.current = next;
+        return next;
+      });
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        saveSettings().catch((error) => setLastError(errorMessage(error)));
+      }, 450);
+    },
+    [saveSettings],
+  );
 
-  const runAction = useCallback(async <T extends object = Record<string, unknown>>(
-    action: string,
-    payload: Record<string, unknown> = {},
-  ) => {
-    setBusyAction(action);
-    setLastError(null);
-    try {
-      if (action !== "save-settings" && action !== "snapshot") await saveSettings();
-      const result = await runLauncherAction<T>(action, payload);
-      await refresh();
-      return result;
-    } catch (error) {
-      const message = errorMessage(error);
-      setLastError(message);
-      appendLog("error", message);
-      throw error;
-    } finally {
-      setBusyAction(null);
-    }
-  }, [appendLog, refresh, saveSettings]);
+  const runAction = useCallback(
+    async <T extends object = Record<string, unknown>>(action: string, payload: Record<string, unknown> = {}) => {
+      setBusyAction(action);
+      setLastError(null);
+      try {
+        if (action !== "save-settings" && action !== "snapshot") await saveSettings();
+        const result = await runLauncherAction<T>(action, payload);
+        await refresh();
+        return result;
+      } catch (error) {
+        const message = errorMessage(error);
+        setLastError(message);
+        appendLog("error", message);
+        throw error;
+      } finally {
+        setBusyAction(null);
+      }
+    },
+    [appendLog, refresh, saveSettings],
+  );
 
-  const startService = useCallback(async (service: ServiceName) => {
-    setLastError(null);
-    try {
-      await saveSettings();
-      await startLauncherService(service);
-    } catch (error) {
-      const message = errorMessage(error);
-      setLastError(message);
-      appendLog("error", message);
-      throw error;
-    }
-  }, [appendLog, saveSettings]);
+  const startService = useCallback(
+    async (service: ServiceName) => {
+      setLastError(null);
+      try {
+        await saveSettings();
+        await startLauncherService(service);
+      } catch (error) {
+        const message = errorMessage(error);
+        setLastError(message);
+        appendLog("error", message);
+        throw error;
+      }
+    },
+    [appendLog, saveSettings],
+  );
 
-  const stopService = useCallback(async (service: ServiceName) => {
-    setLastError(null);
-    try {
-      await stopLauncherService(service);
-    } catch (error) {
-      const message = errorMessage(error);
-      setLastError(message);
-      appendLog("error", message);
-      throw error;
-    }
-  }, [appendLog]);
+  const stopService = useCallback(
+    async (service: ServiceName) => {
+      setLastError(null);
+      try {
+        await stopLauncherService(service);
+      } catch (error) {
+        const message = errorMessage(error);
+        setLastError(message);
+        appendLog("error", message);
+        throw error;
+      }
+    },
+    [appendLog],
+  );
 
   const resetSettings = useCallback(async () => {
     setSettings(DEFAULT_REVIVALSIDE_SETTINGS);
@@ -206,29 +204,46 @@ export const LauncherStateProvider = ({ children }: { children: ReactNode }) => 
     };
   }, [appendLog, refresh]);
 
-  const value = useMemo<LauncherStateContextValue>(() => ({
-    isServerRunning: services.listener.state === "running" || legacyServerRunning,
-    setIsServerRunning: setLegacyServerRunning,
-    snapshot,
-    settings,
-    services,
-    logs,
-    loading,
-    busyAction,
-    lastError,
-    setSetting,
-    saveSettings,
-    resetSettings,
-    refresh,
-    runAction,
-    startService,
-    stopService,
-    clearError: () => setLastError(null),
-    clearLogs: () => setLogs([]),
-  }), [
-    snapshot, settings, services, logs, loading, busyAction, lastError, legacyServerRunning, setSetting, saveSettings,
-    resetSettings, refresh, runAction, startService, stopService,
-  ]);
+  const value = useMemo<LauncherStateContextValue>(
+    () => ({
+      isServerRunning: services.listener.state === "running" || legacyServerRunning,
+      setIsServerRunning: setLegacyServerRunning,
+      appendLog,
+      snapshot,
+      settings,
+      services,
+      logs,
+      loading,
+      busyAction,
+      lastError,
+      setSetting,
+      saveSettings,
+      resetSettings,
+      refresh,
+      runAction,
+      startService,
+      stopService,
+      clearError: () => setLastError(null),
+      clearLogs: () => setLogs([]),
+    }),
+    [
+      snapshot,
+      settings,
+      services,
+      logs,
+      loading,
+      busyAction,
+      lastError,
+      legacyServerRunning,
+      setSetting,
+      saveSettings,
+      resetSettings,
+      refresh,
+      runAction,
+      startService,
+      stopService,
+    ],
+  );
 
   return <LauncherStateContext.Provider value={value}>{children}</LauncherStateContext.Provider>;
 };

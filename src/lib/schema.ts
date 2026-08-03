@@ -27,7 +27,6 @@ export const revivalSideSettingsSchema = z.object({
   serverTime: z.date().default(new Date()),
   skipTutorial: z.boolean().default(false),
   switchToImportedSave: z.boolean().default(true),
-  tcpPort: z.int().min(1).max(65535).default(22000),
   updateMatchingImport: z.boolean().default(true),
   verboseLogging: z.boolean().default(false),
   wikiPort: z.int().min(1).max(65535).default(5174),

@@ -139,7 +139,7 @@ export const Layout = () => {
           <ScrollArea
             className={cn(
               "w-full h-full [&>[data-radix-scroll-area-viewport]>div]:h-full p-7",
-              isHome && "**:data-[slot=scroll-area-scrollbar]:hidden",
+              isHome && "*:data-[slot=scroll-area-scrollbar]:hidden",
             )}
           >
             <AnimateYFade motionKey={location.key} className={cn("w-full h-full opacity-0 p-7", !isHome && "max-w-xl")}>

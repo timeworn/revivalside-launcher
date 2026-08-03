@@ -5,7 +5,7 @@ import { CLOSE_WINDOW_OPTIONS } from "@/lib/schema";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const Settings = () => {
-  const { settings, setSetting, resetSettings } = useSettings();
+  const { settings, setSetting, saveSettings, resetSettings } = useSettings();
 
   return (
     <FieldGroup>
@@ -29,9 +29,12 @@ export const Settings = () => {
         <FieldLegend>Other</FieldLegend>
         <FieldGroup>
           <Field>
-            <FieldLabel>Reset</FieldLabel>
+            {/* <FieldLabel>Reset</FieldLabel> */}
             <div className="flex gap-2">
-              <Button size="lg" onClick={resetSettings}>
+              <Button size="lg" onClick={saveSettings}>
+                Save Settings
+              </Button>
+              <Button size="lg" variant="secondary" onClick={resetSettings}>
                 Reset Settings
               </Button>
             </div>

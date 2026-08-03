@@ -7,7 +7,7 @@ interface ActionButtonProps extends ComponentProps<typeof Button> {
   tooltip?: string;
 }
 
-export const ActionButton: FC<ActionButtonProps> = ({ tooltip, className, children, ...props }) => {
+export const ActionButton: FC<ActionButtonProps> = ({ tooltip, className, children, disabled, ...props }) => {
   const button = (
     <Button
       className={cn("backdrop-blur-3xl bg-secondary/20", className)}

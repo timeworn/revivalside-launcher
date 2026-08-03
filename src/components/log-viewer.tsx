@@ -70,7 +70,7 @@ export const LogViewer: FC<LogViewerProps> = ({ className, bodyClassName, ...pro
           Clear
         </Button>
       </div>
-      <ScrollArea ref={bodyRef} onScroll={onScroll} className={cn("h-64 p-2.5 space-y-0.5", bodyClassName)}>
+      <ScrollArea viewportRef={bodyRef} onScroll={onScroll} className={cn("h-64 p-2.5 space-y-0.5", bodyClassName)}>
         {lines.length === 0 && <div className="text-muted-foreground p-2">Service output will appear here.</div>}
         {lines.map((line) => (
           <div key={line.id} className="flex gap-2 hover:bg-foreground/10 rounded px-1 py-px">

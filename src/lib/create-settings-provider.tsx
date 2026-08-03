@@ -5,7 +5,7 @@ import type { z, ZodObject, ZodRawShape } from "zod/v4";
 interface SettingsContext<TOutput, TInput> {
   settings: TOutput;
   setSetting: <K extends keyof TInput>(key: K, value: TInput[K]) => Promise<void>;
-  saveSettings: () => Promise<void>;
+  saveSettings: () => Promise<boolean>;
   resetSettings: () => Promise<void>;
   loading: boolean;
 }
@@ -41,9 +41,14 @@ export const createSettingsProvider = <TShape extends ZodRawShape>(schema: ZodOb
     );
 
     const saveSettings = useCallback(async () => {
-      const store = await getStore();
-      await store.set("settings", settings);
-      await store.save();
+      try {
+        const store = await getStore();
+        await store.set("settings", settings);
+        await store.save();
+        return true;
+      } catch {
+        return false;
+      }
     }, [settings, getStore]);
 
     const resetSettings = useCallback(async () => {
