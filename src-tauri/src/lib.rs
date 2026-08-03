@@ -538,6 +538,7 @@ pub fn run() {
         services: Arc::new(Mutex::new(HashMap::new())),
     };
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
         .manage(state)
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
