@@ -40,7 +40,7 @@ export const revivalsideConfig: GameConfig = {
     {
       name: "Discord",
       icon: SiDiscord,
-      href: "https://discord.gg/sFVhrBkZxt",
+      href: "https://discord.gg/rBTaXTJYUE",
       type: "external",
       side: "bottom",
     },
