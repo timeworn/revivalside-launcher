@@ -33,14 +33,14 @@ export const revivalsideConfig: GameConfig = {
     {
       name: "Docs",
       icon: BookTextIcon,
-      href: "https://docs.timeworn.net/revivalside",
+      href: "https://url.timeworn.net/GbYsun",
       type: "external",
       side: "bottom",
     },
     {
       name: "Discord",
       icon: SiDiscord,
-      href: "https://discord.gg/rBTaXTJYUE",
+      href: "https://url.timeworn.net/xXWss7",
       type: "external",
       side: "bottom",
     },
