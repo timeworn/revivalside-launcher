@@ -27,21 +27,25 @@ export const getRandomItem = <T>(items: T[]): T | null => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
-const date = Date.now();
-const toAssetUrl = (path: string) => `${convertFileSrc(path)}?v=${date}`;
-
-export const getGameAssets = async (gameId: string): Promise<GameAssets> => {
-  const assets = await invoke<GameAssets>("get_game_assets", { gameId });
+const loadGameAssets = async (command: "get_game_assets" | "refresh_game_assets", gameId: string) => {
+  const assets = await invoke<GameAssets>(command, { gameId });
+  const toAssetUrl = (path: string) => `${convertFileSrc(path)}?v=${assets.revision}`;
 
   return {
     assetsFolder: assets.assetsFolder,
+    revision: assets.revision,
     backgrounds: assets.backgrounds.map(toAssetUrl),
-    favicon: toAssetUrl(assets.favicon),
-    logo: toAssetUrl(assets.logo),
-    mainBackground: toAssetUrl(assets.mainBackground),
+    favicon: assets.favicon ? toAssetUrl(assets.favicon) : undefined,
+    logo: assets.logo ? toAssetUrl(assets.logo) : undefined,
+    mainBackground: assets.mainBackground ? toAssetUrl(assets.mainBackground) : undefined,
     featuredBackground: assets.featuredBackground ? toAssetUrl(assets.featuredBackground) : undefined,
   };
 };
+
+export const getGameAssets = (gameId: string): Promise<GameAssets> => loadGameAssets("get_game_assets", gameId);
+
+export const refreshGameAssets = (gameId: string): Promise<GameAssets> =>
+  loadGameAssets("refresh_game_assets", gameId);
 
 export const formatHms = (seconds: number) => {
   const s = Math.max(0, Math.floor(seconds));

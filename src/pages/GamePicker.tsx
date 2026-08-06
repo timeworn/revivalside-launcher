@@ -16,7 +16,7 @@ export const GamePicker = () => {
 
   return (
     <div className="flex flex-col h-full">
-      {hoveredGame?.assets && (
+      {hoveredGame?.assets?.logo && (
         <AnimateYFade motionKey={hoveredGame.id}>
           <img src={hoveredGame.assets.logo} className="w-sm" />
         </AnimateYFade>
@@ -41,11 +41,13 @@ export const GamePicker = () => {
                   )}
                   onClick={() => navigate(`/${game.id}`)}
                 >
-                  <img
-                    src={game.assets?.mainBackground}
-                    className="object-cover w-full h-full absolute brightness-75"
-                  />
-                  <img src={game.assets?.logo} className="w-1/2 relative" />
+                  {game.assets?.mainBackground && (
+                    <img
+                      src={game.assets.mainBackground}
+                      className="object-cover w-full h-full absolute brightness-75"
+                    />
+                  )}
+                  {game.assets?.logo && <img src={game.assets.logo} className="w-1/2 relative" />}
                 </button>
                 <p className="text-sm text-center mt-2 font-bold">{game.name}</p>
               </div>

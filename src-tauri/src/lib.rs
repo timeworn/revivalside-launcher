@@ -1,6 +1,6 @@
-use crate::assets::get_game_assets;
 use crate::assets::resolve_assets_root;
 use crate::assets::restore_assets;
+use crate::assets::{get_game_assets, refresh_game_assets};
 use serde::Serialize;
 use serde_json::{json, Value};
 use std::{
@@ -44,11 +44,12 @@ struct LauncherState {
 #[serde(rename_all = "camelCase")]
 struct GameAssetPaths {
     assets_folder: String,
+    revision: String,
     backgrounds: Vec<String>,
-    main_background: String,
+    main_background: Option<String>,
     featured_background: Option<String>,
-    favicon: String,
-    logo: String,
+    favicon: Option<String>,
+    logo: Option<String>,
 }
 
 #[derive(Clone, Serialize)]
@@ -586,6 +587,7 @@ pub fn run() {
             close_window,
             quit_launcher,
             get_game_assets,
+            refresh_game_assets,
         ])
         .build(tauri::generate_context!())
         .expect("error while building RevivalSide launcher")

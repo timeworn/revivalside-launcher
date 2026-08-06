@@ -80,7 +80,7 @@ export const Home = () => {
   return (
     <>
       <div className="relative flex h-full min-h-0 flex-1 flex-col">
-        <img src={activeGame?.assets?.logo} className="w-sm" alt="RevivalSide" />
+        {activeGame?.assets?.logo && <img src={activeGame.assets.logo} className="w-sm" alt="RevivalSide" />}
         <div className="absolute bottom-0 left-0 flex w-full max-w-xl flex-col gap-4">
           {lastError && (
             <Card className="max-w-2xl bg-destructive/15 border-destructive/40 backdrop-blur-3xl">

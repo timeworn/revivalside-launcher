@@ -4,11 +4,12 @@ import type { RouteObject } from "react-router-dom";
 
 export type GameAssets<T = unknown> = {
   assetsFolder: string;
+  revision: string;
   backgrounds: string[];
-  mainBackground: string;
+  mainBackground?: string;
   featuredBackground?: string;
-  favicon: string;
-  logo: string;
+  favicon?: string;
+  logo?: string;
 } & T;
 
 export interface GameConfig {

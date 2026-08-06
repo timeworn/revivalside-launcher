@@ -2,7 +2,8 @@ use tauri::State;
 
 use crate::GameAssetPaths;
 use crate::LauncherState;
-use std::collections::HashSet;
+use std::collections::{hash_map::DefaultHasher, HashSet};
+use std::hash::{Hash, Hasher};
 use std::path::Component;
 use std::{
     env, fs,
@@ -183,38 +184,70 @@ fn display_path(path: PathBuf) -> String {
     path.to_string_lossy().into_owned()
 }
 
-#[tauri::command]
-pub fn get_game_assets(
+fn create_revision(images: &[PathBuf]) -> String {
+    let mut hasher = DefaultHasher::new();
+    for image in images {
+        image.hash(&mut hasher);
+        if let Ok(metadata) = image.metadata() {
+            metadata.len().hash(&mut hasher);
+            if let Ok(modified) = metadata.modified() {
+                modified.hash(&mut hasher);
+            }
+        }
+    }
+    hasher.finish().to_string()
+}
+
+fn read_game_assets(
     state: State<'_, LauncherState>,
     game_id: String,
+    restore_defaults: bool,
 ) -> Result<GameAssetPaths, String> {
     let mut components = Path::new(&game_id).components();
     if !matches!(components.next(), Some(Component::Normal(_))) || components.next().is_some() {
         return Err(format!("Invalid game asset id: {game_id}"));
     }
 
-    restore_assets(&state.assets_root)?;
-
     let game_root = state.assets_root.join(&game_id);
-    let root_images = collect_images(&game_root, false)?;
-    let required = |name: &str| {
-        named_image(&root_images, name).ok_or_else(|| {
+    if restore_defaults {
+        restore_assets(&state.assets_root)?;
+    } else {
+        fs::create_dir_all(&game_root).map_err(|error| {
             format!(
-                "The required {name} image was not found in {}",
+                "Could not recreate the game asset directory at {}: {error}",
                 game_root.display()
             )
-        })
-    };
+        })?;
+    }
+
+    let root_images = collect_images(&game_root, false)?;
+    let backgrounds = collect_images(&game_root.join("bg"), true)?;
+    let mut all_images = root_images.clone();
+    all_images.extend(backgrounds.iter().cloned());
 
     Ok(GameAssetPaths {
         assets_folder: display_path(game_root.clone()),
-        backgrounds: collect_images(&game_root.join("bg"), true)?
-            .into_iter()
-            .map(display_path)
-            .collect(),
-        main_background: display_path(required("main")?),
+        revision: create_revision(&all_images),
+        backgrounds: backgrounds.into_iter().map(display_path).collect(),
+        main_background: named_image(&root_images, "main").map(display_path),
         featured_background: named_image(&root_images, "featured").map(display_path),
-        favicon: display_path(required("favicon")?),
-        logo: display_path(required("logo")?),
+        favicon: named_image(&root_images, "favicon").map(display_path),
+        logo: named_image(&root_images, "logo").map(display_path),
     })
+}
+
+#[tauri::command]
+pub fn get_game_assets(
+    state: State<'_, LauncherState>,
+    game_id: String,
+) -> Result<GameAssetPaths, String> {
+    read_game_assets(state, game_id, true)
+}
+
+#[tauri::command]
+pub fn refresh_game_assets(
+    state: State<'_, LauncherState>,
+    game_id: String,
+) -> Result<GameAssetPaths, String> {
+    read_game_assets(state, game_id, false)
 }

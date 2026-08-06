@@ -50,6 +50,12 @@ export const Layout = () => {
     });
   };
 
+  const setBgError = () => {
+    setBgUrl(null);
+    setPrevBgUrl(null);
+    setFading(false);
+  };
+
   useEffect(() => {
     const game = activeGame ?? hoveredGame;
     if (!game) return;
@@ -57,7 +63,11 @@ export const Layout = () => {
     const next =
       game.assets?.featuredBackground ?? (game.assets?.backgrounds ? getRandomItem(game.assets.backgrounds) : null);
 
-    if (!next || next === bgUrl) return;
+    if (!next) {
+      setBgError();
+      return;
+    }
+    if (next === bgUrl) return;
 
     setPrevBgUrl(bgUrl);
     setFading(true);
@@ -83,6 +93,7 @@ export const Layout = () => {
               key={bgUrl}
               src={bgUrl}
               onLoad={handleNewBgLoaded}
+              onError={setBgError}
               className={cn(
                 "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
                 fading ? "opacity-0" : "opacity-100",
