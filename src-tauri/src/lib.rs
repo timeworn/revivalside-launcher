@@ -1,3 +1,6 @@
+use crate::assets::get_game_assets;
+use crate::assets::resolve_assets_root;
+use crate::assets::restore_assets;
 use serde::Serialize;
 use serde_json::{json, Value};
 use std::{
@@ -11,6 +14,7 @@ use std::{
 };
 use tauri::{AppHandle, Emitter, Manager, State};
 
+mod assets;
 mod tray;
 
 const EVENT_PREFIX: &str = "@@REVIVALSIDE_EVENT@@";
@@ -32,7 +36,19 @@ struct ServiceProcess {
 
 struct LauncherState {
     app_root: PathBuf,
+    assets_root: PathBuf,
     services: Arc<Mutex<HashMap<String, ServiceProcess>>>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct GameAssetPaths {
+    assets_folder: String,
+    backgrounds: Vec<String>,
+    main_background: String,
+    featured_background: Option<String>,
+    favicon: String,
+    logo: String,
 }
 
 #[derive(Clone, Serialize)]
@@ -533,8 +549,14 @@ fn quit_launcher(app: AppHandle, state: State<'_, LauncherState>) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let assets_root =
+        resolve_assets_root().expect("failed to resolve the launcher assets directory");
+    restore_assets(&assets_root).expect("failed to restore the bundled launcher assets");
+
+    let asset_protocol_root = assets_root.clone();
     let state = LauncherState {
         app_root: resolve_app_root(),
+        assets_root,
         services: Arc::new(Mutex::new(HashMap::new())),
     };
     tauri::Builder::default()
@@ -550,7 +572,9 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .setup(|app| {
+        .setup(move |app| {
+            app.asset_protocol_scope()
+                .allow_directory(&asset_protocol_root, true)?;
             tray::setup_tray(app)?;
             Ok(())
         })
@@ -561,6 +585,7 @@ pub fn run() {
             stop_launcher_service,
             close_window,
             quit_launcher,
+            get_game_assets,
         ])
         .build(tauri::generate_context!())
         .expect("error while building RevivalSide launcher")

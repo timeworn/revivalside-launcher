@@ -13,7 +13,7 @@ export const revivalsideConfig: GameConfig = {
   name: "RevivalSide",
   description:
     "A world where conflict never ends between Counters and Corrupted Objects after the Administration Failure. We invite you to a journey to save the Reality.",
-  assets: getGameAssets("revivalside"),
+  assets: await getGameAssets("revivalside"),
   sidebarItems: [
     {
       name: "Home",

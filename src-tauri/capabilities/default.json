@@ -8,6 +8,14 @@
   "permissions": [
     "core:default",
     "opener:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "/**"
+        }
+      ]
+    },
     "core:window:default",
     "core:window:allow-close",
     "core:window:allow-minimize",

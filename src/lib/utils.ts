@@ -1,4 +1,5 @@
 import type { GameAssets } from "@/games/types";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -26,30 +27,20 @@ export const getRandomItem = <T>(items: T[]): T | null => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
-const allMainBgs = import.meta.glob("@/assets/*/main.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allFeaturedBgs = import.meta.glob("@/assets/*/featured.{webp,png,jpg,jpeg,avif}", {
-  eager: true,
-  import: "default",
-});
-const allBgs = import.meta.glob("@/assets/*/bg/**/*.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allFavicons = import.meta.glob("@/assets/*/favicon.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
-const allLogos = import.meta.glob("@/assets/*/logo.{webp,png,jpg,jpeg,avif}", { eager: true, import: "default" });
+const date = Date.now();
+const toAssetUrl = (path: string) => `${convertFileSrc(path)}?v=${date}`;
 
-export const getGameAssets = (gameId: string): GameAssets => {
-  const mainBackground = Object.entries(allMainBgs).find(([path]) =>
-    path.includes(`/assets/${gameId}/main`),
-  )?.[1] as string;
-  const featuredBackground = Object.entries(allFeaturedBgs).find(([path]) =>
-    path.includes(`/assets/${gameId}/featured`),
-  )?.[1] as string;
-  const backgrounds = Object.entries(allBgs)
-    .filter(([path]) => path.includes(`/assets/${gameId}/bg/`))
-    .map(([, url]) => url as string);
+export const getGameAssets = async (gameId: string): Promise<GameAssets> => {
+  const assets = await invoke<GameAssets>("get_game_assets", { gameId });
 
-  const favicon = Object.entries(allFavicons).find(([path]) => path.includes(`/assets/${gameId}/`))?.[1] as string;
-  const logo = Object.entries(allLogos).find(([path]) => path.includes(`/assets/${gameId}/`))?.[1] as string;
-
-  return { backgrounds, favicon, logo, mainBackground, featuredBackground };
+  return {
+    assetsFolder: assets.assetsFolder,
+    backgrounds: assets.backgrounds.map(toAssetUrl),
+    favicon: toAssetUrl(assets.favicon),
+    logo: toAssetUrl(assets.logo),
+    mainBackground: toAssetUrl(assets.mainBackground),
+    featuredBackground: assets.featuredBackground ? toAssetUrl(assets.featuredBackground) : undefined,
+  };
 };
 
 export const formatHms = (seconds: number) => {

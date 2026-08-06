@@ -23,14 +23,15 @@ import {
 } from "lucide-react";
 import { LogViewer } from "@/components/log-viewer";
 import { useEffect, useState } from "react";
-import logo from "@/assets/revivalside/logo.webp";
 import { ActionButton } from "@/games/revivalside/pages/Home/ActionButton";
 import { useLauncherState } from "@/components/providers/launcher-state-provider";
 import { GameSettings } from "@/games/revivalside/pages/Home/GameSettings";
 import { openPath, openUrl } from "@tauri-apps/plugin-opener";
 import { ServerLaunchButton } from "@/games/revivalside/pages/Home/server-launch-button";
+import { useGame } from "@/components/providers/game-provider";
 
 export const Home = () => {
+  const { activeGame } = useGame();
   const { snapshot, settings, services, busyAction, lastError, clearError, startService, stopService, runAction } =
     useLauncherState();
   const [open, setOpen] = useState(false);
@@ -79,7 +80,7 @@ export const Home = () => {
   return (
     <>
       <div className="relative flex h-full min-h-0 flex-1 flex-col">
-        <img src={logo} className="w-sm" alt="RevivalSide" />
+        <img src={activeGame?.assets?.logo} className="w-sm" alt="RevivalSide" />
         <div className="absolute bottom-0 left-0 flex w-full max-w-xl flex-col gap-4">
           {lastError && (
             <Card className="max-w-2xl bg-destructive/15 border-destructive/40 backdrop-blur-3xl">
@@ -106,7 +107,7 @@ export const Home = () => {
               <ActionButton
                 tooltip="Freeze Client"
                 disabled={!settings.sourceClientPath || !!busyAction || listener.state !== "stopped"}
-                onClick={() => void freezeClient()}
+                onClick={() => void runAction("freeze-client")}
               >
                 {busyAction === "freeze-client" ? <Spinner /> : <SnowflakeIcon />}
               </ActionButton>
@@ -195,11 +196,11 @@ export const Home = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-fit" side="top" align="end">
               <DropdownMenuItem
-                disabled={!snapshot}
-                onClick={() => snapshot && openPath(snapshot.frozenClientRoot || snapshot.appRoot)}
+                disabled={!activeGame?.assets?.assetsFolder}
+                onClick={() => activeGame?.assets?.assetsFolder && openPath(activeGame.assets.assetsFolder)}
               >
                 <FolderOpenIcon />
-                Browse Local Files
+                Browse Assets Files
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowGameSettings(true)}>
                 <SettingsIcon />

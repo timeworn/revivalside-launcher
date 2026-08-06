@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 import type { RouteObject } from "react-router-dom";
 
 export type GameAssets<T = unknown> = {
+  assetsFolder: string;
   backgrounds: string[];
   mainBackground: string;
   featuredBackground?: string;

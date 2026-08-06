@@ -31,7 +31,7 @@ export const GameProvider = ({ games, children }: { games: GameConfig[]; childre
     const found = settings.activeGameId ? (games.find((game) => game.id === settings.activeGameId) ?? null) : null;
     setActiveGameState(found);
     navigate(found ? `/${found.id}` : "/");
-  }, [loading]);
+  }, [loading, settings.activeGameId, games, navigate]);
 
   useEffect(() => {
     if (!restoredRef.current) return;
