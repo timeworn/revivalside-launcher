@@ -77,6 +77,15 @@ fn path_contains_file(path: &Path) -> Result<bool, String> {
     Ok(false)
 }
 
+fn stem_exists(directory: &Path, stem: &str) -> bool {
+    let Ok(entries) = fs::read_dir(directory) else {
+        return false;
+    };
+    entries.flatten().any(|entry| {
+        entry.path().is_file() && entry.path().file_stem().and_then(|s| s.to_str()) == Some(stem)
+    })
+}
+
 fn matches_rule<'a>(relative: &Path, rules: &'a [AssetRule]) -> Option<&'a AssetRule> {
     rules
         .iter()
@@ -111,7 +120,12 @@ pub fn restore_assets(assets_root: &Path) -> Result<(), String> {
         }
 
         let destination = assets_root.join(relative);
-        if destination.is_file() {
+        let stem = destination.file_stem().and_then(|s| s.to_str());
+        if destination
+            .parent()
+            .zip(stem)
+            .is_some_and(|(parent, stem)| stem_exists(parent, stem))
+        {
             continue;
         }
 
