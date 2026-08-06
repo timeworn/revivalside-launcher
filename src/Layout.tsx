@@ -36,6 +36,7 @@ export const Layout = () => {
     ...(activeGame?.sidebarItems
       ? activeGame.sidebarItems.map((item) => ({
           ...item,
+          type: item.type ?? "link",
           href: !item.type || item.type === "link" ? `/${activeGame.id}${item.href}` : item.href,
         }))
       : []),
@@ -115,7 +116,7 @@ export const Layout = () => {
                 {items
                   .filter((item) => item.side === "top" || !item.side)
                   .map((item, index) => (
-                    <SidebarItem key={index} item={item} delay={index * 0.05} />
+                    <SidebarItem key={`${item.type}:${item.href}`} item={item} delay={index * 0.05} />
                   ))}
               </AnimatePresence>
             </SidebarGroup>
@@ -123,8 +124,8 @@ export const Layout = () => {
               <AnimatePresence>
                 {items
                   .filter((item) => item.side === "bottom")
-                  .map((item, index) => (
-                    <SidebarItem key={index} item={item} />
+                  .map((item) => (
+                    <SidebarItem key={`${item.type}:${item.href}`} item={item} />
                   ))}
               </AnimatePresence>
             </SidebarGroup>
